@@ -6,7 +6,7 @@ public class Circulo {
     private int x;
     private int y;
     private int raio;
-    private Color cor = Color.LIGHT_GRAY;
+    private Color cor = Color.YELLOW;
     private String rotulo;
     public Circulo(int x, int y, int raio){
         this.x = x;

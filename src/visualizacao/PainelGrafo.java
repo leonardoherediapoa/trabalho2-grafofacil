@@ -139,63 +139,43 @@ public class PainelGrafo extends JPanel {
         }
     }
 
-    public void fazerDFSAnimado(String rotuloOrigem) {
-        Vertice origem = null;
-        for (Vertice v : grafo.getListaVertices()) {
-            if (v.getRotulo().equals(rotuloOrigem)) {
-                origem = v;
-                break;
-            }
-        }
+    public void desenharArestas(List<Aresta> arestas, Color cor, int delayMs) {
+        if (arestas == null || arestas.isEmpty()) return;
 
-        if (origem == null) {
-            JOptionPane.showMessageDialog(this, "Vértice de origem não encontrado: " + rotuloOrigem);
-            return;
-        }
+        new Thread(() -> {
+            try {
+                for (Aresta a : arestas) {
+                    Vertice origem = a.getOrigem();
+                    Vertice destino = a.getDestino();
 
-        for (Circulo c : listaCirculo) {
-            c.setCor(Color.LIGHT_GRAY);
-        }
+                    setCorVertice(origem, cor);
+                    setCorVertice(destino, cor);
 
-        Stack<Vertice> pilha = new Stack<>();
-        Set<Vertice> visitados = new HashSet<>();
+                    SwingUtilities.invokeLater(this::repaint);
 
-        pilha.push(origem);
-        Timer timer = new Timer(1000, null);
-
-        timer.addActionListener(e -> {
-            if (pilha.isEmpty()) {
-                timer.stop();
-                return;
-            }
-
-            Vertice atual = pilha.pop();
-
-            if (!visitados.contains(atual)) {
-                visitados.add(atual);
-
-                Circulo c = mapaVerticeCirculo.get(atual);
-                if (c != null) {
-                    c.setCor(Color.RED);
+                    Thread.sleep(delayMs);
                 }
-
-                repaint();
-
-                List<Aresta> adj = grafo.getAdjacencias(atual);
-                if (adj != null) {
-                    for (int i = adj.size() - 1; i >= 0; i--) {
-                        Vertice destino = adj.get(i).getDestino();
-                        if (!visitados.contains(destino)) {
-                            pilha.push(destino);
-                        }
-                    }
-                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        });
-
-        timer.start();
+        }).start();
     }
+    public void desenharVertices(List<Vertice> vertices, Color cor, int delayMs) {
+        if (vertices == null || vertices.isEmpty()) return;
 
+        new Thread(() -> {
+            try {
+                for (Vertice v : vertices) {
+                    setCorVertice(v, cor); // muda a cor do vértice
+                    SwingUtilities.invokeLater(this::repaint); // força atualização visual
+                    Thread.sleep(delayMs); // espera
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+    }
 
 
 }

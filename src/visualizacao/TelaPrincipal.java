@@ -4,6 +4,7 @@ import algoritmos.MarcarVertices;
 import estruturas.Aresta;
 import estruturas.Grafo;
 import estruturas.Vertice;
+import utils.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -49,7 +50,7 @@ public class TelaPrincipal extends JFrame {
         painelGrafo.setVisible(true);
 
         painelLog = new JPanel(new BorderLayout());
-        painelLog.setPreferredSize(new Dimension(800, 50));
+        painelLog.setPreferredSize(new Dimension(800, 100));
         textLog = new JTextArea();
         textLog.setEditable(false);
         textLog.setLineWrap(true);
@@ -89,7 +90,6 @@ public class TelaPrincipal extends JFrame {
                                              painelGrafo.desenharGrafo();
                                              painelGrafo.setVisible(true);
                                              painelGrafo.repaint();
-                                             updateLog();
                                          }
                                      }
         );
@@ -112,15 +112,7 @@ public class TelaPrincipal extends JFrame {
         barraBotoes.add(btnMarcar);
 
         JButton btnDFS = new JButton("Profundidade");
-        btnDFS.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String origem = JOptionPane.showInputDialog("Informe o vértice de origem para DFS:");
-                if (origem != null && !origem.trim().isEmpty()) {
-                    painelGrafo.fazerDFSAnimado(origem.trim());
-                }
-            }
-        });
+
         barraBotoes.add(btnDFS);
 
         JButton btnLargura = new JButton("Largura");
@@ -182,6 +174,9 @@ public class TelaPrincipal extends JFrame {
         setJMenuBar(menuBar);
         setVisible(true);
 
+        LogManager.configurar(textLog, grafo);
+        LogManager.updateLog("conteudo adicional");
+
     }
 
     private void criarBotoes() {
@@ -224,12 +219,7 @@ public class TelaPrincipal extends JFrame {
         }
     }
 
-    public void updateLog() {
-        StringBuilder log = new StringBuilder();
-        log.append("Tipo de Grafo: ").append(grafo.isDirecionado() ? "Direcionado" : "Não Direcionado").append("\n");
-        log.append("Número de Vértices: ").append(grafo.getNumeroVertices()).append("\n");
-        log.append("Número de Arestas: ").append(grafo.getListaArestas().size()).append("\n");
-        textLog.setText(log.toString());
-        textLog.setCaretPosition(0);
-    }
+
+
+
 }
