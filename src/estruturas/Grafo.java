@@ -105,4 +105,9 @@ public class Grafo {
             }
         }
     }
+    public boolean contemCiclos() {
+        //IMPLEMENTAR
+        //ISSUE
+        return false;
+    }
 }
