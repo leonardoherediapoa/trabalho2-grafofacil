@@ -12,5 +12,8 @@ Com esse trabalho sera possivel exercitar os conhecimentos adquiridos em ALEST2,
 ![image](https://github.com/user-attachments/assets/aed312e0-569b-4822-8243-0a8b718b2468)
 
 ## O que deve ser entregue?
-As entregas sao o proprio codigo junto com a documentacao dentro do proprio github. Voce pode criar um arquivo README.md dentro de cada pasta e ele sera automaticamente exibido.
-A documentaca deve ser feita usando esse arquivo.
+As entregas sao o proprio codigo junto com a documentacao dentro do proprio github. 
+
+Voce pode criar um arquivo README.md dentro de cada pasta e ele sera automaticamente exibido.
+
+A documentacao deve ser feita usando esse arquivo.
