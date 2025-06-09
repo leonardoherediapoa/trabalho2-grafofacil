@@ -9,4 +9,6 @@ Algumas sao simples e outras mais complexas.
 Cada grupo pode fazer seu trabalho independentemnte dos demais. Uma vez terminado o codigo pode ser integrado com o codigo principal.
 Com esse trabalho sera possivel exercitar os conhecimentos adquiridos em ALEST2, assim como praticar desenvolvimento de software em equipe e controle de versoes.
 
+![image](https://github.com/user-attachments/assets/aed312e0-569b-4822-8243-0a8b718b2468)
+
 ....mais detalhes em breve
