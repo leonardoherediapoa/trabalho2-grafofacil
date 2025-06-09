@@ -125,8 +125,17 @@ public class TelaPrincipal extends JFrame {
 
         JButton btnLargura = new JButton("Largura");
         barraBotoes.add(btnLargura);
-        painelEsquerdo.add(scrollPane, BorderLayout.CENTER);
 
+        JButton btnMST = new JButton("MST");
+        barraBotoes.add(btnMST);
+
+        JButton btnDijkstra = new JButton("Dijkstra");
+        barraBotoes.add(btnDijkstra);
+
+        JButton btnFord = new JButton("Bellman-Ford");
+        barraBotoes.add(btnFord);
+
+        painelEsquerdo.add(scrollPane, BorderLayout.CENTER);
         painelEsquerdo.add(barraBotoes, BorderLayout.NORTH);
         painelEsquerdo.add(scrollPane, BorderLayout.CENTER);
 
@@ -175,7 +184,9 @@ public class TelaPrincipal extends JFrame {
 
     }
 
+    private void criarBotoes() {
 
+    }
     private void abrirArquivo() {
         JFileChooser fileChooser = new JFileChooser();
         int escolha = fileChooser.showOpenDialog(this);

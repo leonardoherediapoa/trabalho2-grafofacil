@@ -17,7 +17,7 @@ public class MarcarVertices {
         for (Vertice v : vertices) {
             if (grafo.getListaVertices().contains(v)) {
                 painel.setCorVertice(v, Color.RED);
-                Thread.sleep(1000);
+                Thread.sleep(500);
                 painel.repaint();
             }
         }

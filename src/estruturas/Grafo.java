@@ -52,7 +52,8 @@ public class Grafo {
         return null;
     }
     public List<Vertice> getListaVertices() {
-        return listaAdjacencia.keySet().stream().toList();
+        return new ArrayList<>(listaAdjacencia.keySet());
+
     }
     public List<Aresta> getListaArestas() {
         List<Aresta> lista = new ArrayList<>();
