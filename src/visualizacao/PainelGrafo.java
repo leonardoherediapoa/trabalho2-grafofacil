@@ -5,6 +5,7 @@ import estruturas.Grafo;
 import estruturas.Vertice;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -106,8 +107,9 @@ public class PainelGrafo extends JPanel {
                                                 cDestino.getRaio(),
                                             new Point(cOrigem.getX(), cOrigem.getY()));
 
-            Linha l = new Linha(pOrigem.x, pOrigem.y, pDestino.x, pDestino.y);
-            l.desenhar(g2d);
+            Linha l = new Linha(pOrigem.x, pOrigem.y, pDestino.x, pDestino.y, String.valueOf(e.getPeso()));
+            if(e.isDirecionada()) l.desenharSeta(g2d);
+            else l.desenhar(g2d);
         }
     }
     private Point getInterseccao(Point center, int radius, Point otherCenter) {
@@ -122,5 +124,78 @@ public class PainelGrafo extends JPanel {
 
         return new Point(x, y);
     }
+    public void limpar() {
+        listaCirculo.clear();
+        mapaVerticeCirculo.clear();
+        circuloAtivo = null;
+        grafo.limpar();
+        repaint();
+    }
+    public void setCorVertice(Vertice v, Color cor) {
+        Circulo c = mapaVerticeCirculo.get(v);
+        if (c != null) {
+            c.setCor(cor);
+            repaint();
+        }
+    }
+
+    public void fazerDFSAnimado(String rotuloOrigem) {
+        Vertice origem = null;
+        for (Vertice v : grafo.getListaVertices()) {
+            if (v.getRotulo().equals(rotuloOrigem)) {
+                origem = v;
+                break;
+            }
+        }
+
+        if (origem == null) {
+            JOptionPane.showMessageDialog(this, "Vértice de origem não encontrado: " + rotuloOrigem);
+            return;
+        }
+
+        for (Circulo c : listaCirculo) {
+            c.setCor(Color.LIGHT_GRAY);
+        }
+
+        Stack<Vertice> pilha = new Stack<>();
+        Set<Vertice> visitados = new HashSet<>();
+
+        pilha.push(origem);
+        Timer timer = new Timer(1000, null);
+
+        timer.addActionListener(e -> {
+            if (pilha.isEmpty()) {
+                timer.stop();
+                return;
+            }
+
+            Vertice atual = pilha.pop();
+
+            if (!visitados.contains(atual)) {
+                visitados.add(atual);
+
+                Circulo c = mapaVerticeCirculo.get(atual);
+                if (c != null) {
+                    c.setCor(Color.RED);
+                }
+
+                repaint();
+
+                List<Aresta> adj = grafo.getAdjacencias(atual);
+                if (adj != null) {
+                    for (int i = adj.size() - 1; i >= 0; i--) {
+                        Vertice destino = adj.get(i).getDestino();
+                        if (!visitados.contains(destino)) {
+                            pilha.push(destino);
+                        }
+                    }
+                }
+            }
+        });
+
+        timer.start();
+    }
+
+
 
 }

@@ -1,5 +1,6 @@
 package visualizacao;
 
+import algoritmos.MarcarVertices;
 import estruturas.Aresta;
 import estruturas.Grafo;
 import estruturas.Vertice;
@@ -8,89 +9,216 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.FileSystemNotFoundException;
+import java.io.*;
+import java.util.Scanner;
+
 
 public class TelaPrincipal extends JFrame {
     public final Grafo grafo;
     public String dadosGrafo;
     public PainelGrafo painelGrafo;
+    private JPanel painelDireito;
+    private JPanel painelEsquerdo;
+    private JPanel painelDados;
+    private JPanel painelLog;
+    private JTextArea textLog;
+    public JTextArea textArea;
+
     public TelaPrincipal() {
         //dadosGrafo = "A" + System.lineSeparator() + "B" + System.lineSeparator() + "C";
-        dadosGrafo = "A -- B";
-        dadosGrafo += System.lineSeparator() + "D -- C";
-        grafo = Grafo.gerarGrafo(dadosGrafo);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 800);
         setLocationRelativeTo(null);
         setTitle("ALEST2 - Ferramenta para apoio ao aprendizado de grafos");
-        setLayout(new BorderLayout());
 
-        JMenuBar menuBar = new JMenuBar();
-        JMenu menuArquivo = new JMenu("Arquivo");
-        JMenuItem menuItemSalvar = new JMenuItem("Salvar");
-        JMenuItem menuItemSair = new JMenuItem("Sair");
-        menuItemSalvar.addActionListener(e -> salvar());
-        menuItemSair.addActionListener(e -> System.exit(0));
-        menuArquivo.add(menuItemSalvar);
-        menuArquivo.add(menuItemSair);
-        menuBar.add(menuArquivo);
-        setJMenuBar(menuBar);
-
-        System.out.println(grafo.toDot());
-        painelGrafo = new PainelGrafo(grafo);
-
-        // Painel esquerdo
-        JPanel painelDireito = new JPanel(new BorderLayout());
-        add(painelDireito);
-
-        // Adicionando um painel dentro do painel esquerdo
-        painelGrafo.setBackground(Color.WHITE); // Cor de fundo do painel interno
-        painelGrafo.setVisible(true);
-        painelDireito.add(painelGrafo, BorderLayout.CENTER); // Adiciona o painel interno ao painel esquerdo
-
-        PainelDados painelDados = new PainelDados(painelGrafo, grafo);
-
-        // Painel direito
-        JPanel painelEsquerdo = new JPanel(new BorderLayout());
+        painelEsquerdo = new JPanel(new BorderLayout());
         painelEsquerdo.setPreferredSize(new Dimension(200, 0));
         JButton btnAplicar = new JButton("Aplicar");
+
+        painelDireito = new JPanel(new BorderLayout());
+
+        painelEsquerdo = new JPanel(new BorderLayout());
+        painelEsquerdo.setPreferredSize(new Dimension(300, 0));
+
+        textArea = new JTextArea();
+        JScrollPane scrollPane = new JScrollPane(textArea);
+
+        grafo = new Grafo();
+        painelGrafo = new PainelGrafo(grafo);
+        painelGrafo.setBackground(Color.WHITE);
+        painelGrafo.setVisible(true);
+
+        painelLog = new JPanel(new BorderLayout());
+        painelLog.setPreferredSize(new Dimension(800, 50));
+        textLog = new JTextArea();
+        textLog.setEditable(false);
+        textLog.setLineWrap(true);
+        textLog.setWrapStyleWord(true);
+        painelLog.add(new JScrollPane(textLog), BorderLayout.CENTER);
+
+        painelDireito.add(painelGrafo, BorderLayout.CENTER);
+        painelDireito.add(painelLog, BorderLayout.SOUTH);
+
+        JPanel barraBotoes = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton botaoAbrir = new JButton("Abrir");
+        botaoAbrir.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                abrirArquivo();
+            }
+        });
+
+        JButton botaoSalvar = new JButton("Salvar");
+        botaoSalvar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                salvarArquivo();
+            }
+        });
+
+        barraBotoes.add(botaoAbrir);
+        barraBotoes.add(botaoSalvar);
+
         btnAplicar.addActionListener(new ActionListener() {
                                          @Override
                                          public void actionPerformed(ActionEvent e) {
                                              System.out.println("Clicou no Aplicar da Tela Principal");
-                                             dadosGrafo = painelDados.textArea.getText();
+                                             dadosGrafo = textArea.getText();
+                                             painelGrafo.limpar();
                                              grafo.atualizarGrafo(dadosGrafo);
                                              painelGrafo.desenharGrafo();
                                              painelGrafo.setVisible(true);
                                              painelGrafo.repaint();
+                                             updateLog();
                                          }
                                      }
         );
-        painelEsquerdo.add(btnAplicar, BorderLayout.SOUTH);
-        painelEsquerdo.add(painelDados, BorderLayout.CENTER);
-        add(painelEsquerdo, BorderLayout.WEST);
 
+        JButton btnMarcar = new JButton("Marcar Vertices");
+        btnMarcar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String origem = JOptionPane.showInputDialog("Informe o vértice de origem para DFS:");
+                if (origem != null && !origem.trim().isEmpty()) {
+                    MarcarVertices marcarVertices = new MarcarVertices(painelGrafo);
+                    try {
+                        marcarVertices.marcarVertices(grafo, grafo.getListaVertices());
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+        });
+        barraBotoes.add(btnMarcar);
 
+        JButton btnDFS = new JButton("Profundidade");
+        btnDFS.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String origem = JOptionPane.showInputDialog("Informe o vértice de origem para DFS:");
+                if (origem != null && !origem.trim().isEmpty()) {
+                    painelGrafo.fazerDFSAnimado(origem.trim());
+                }
+            }
+        });
+        barraBotoes.add(btnDFS);
 
-        // Barra de rodapé
-        JLabel statusLabel = new JLabel("Versão 1.0");
-        statusLabel.setBorder(BorderFactory.createLoweredBevelBorder());
-        add(statusLabel, BorderLayout.SOUTH);
+        JButton btnLargura = new JButton("Largura");
+        barraBotoes.add(btnLargura);
+        painelEsquerdo.add(scrollPane, BorderLayout.CENTER);
 
+        painelEsquerdo.add(barraBotoes, BorderLayout.NORTH);
+        painelEsquerdo.add(scrollPane, BorderLayout.CENTER);
+
+        painelDados = new JPanel(new BorderLayout());
+        painelDados.add(painelEsquerdo, BorderLayout.CENTER);
+        painelDados.add(btnAplicar, BorderLayout.SOUTH);
+
+        setLayout(new BorderLayout());
+        add(barraBotoes, BorderLayout.NORTH);
+        add(painelDireito, BorderLayout.CENTER);
+        add(painelDados, BorderLayout.WEST);
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menuArquivo = new JMenu("Arquivo");
+
+        JMenuItem menuItemAbrir = new JMenuItem("Abrir");
+        menuItemAbrir.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                abrirArquivo();
+                System.out.println(textArea.getText());
+                SwingUtilities.invokeLater(() -> {
+                    painelEsquerdo.invalidate();
+                    painelEsquerdo.revalidate();
+                    painelEsquerdo.repaint();
+                });
+            }
+        });
+
+        JMenuItem menuItemSalvar = new JMenuItem("Salvar");
+        menuItemSalvar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                salvarArquivo();
+            }
+        });
+
+        JMenuItem menuItemSair = new JMenuItem("Sair");
+        menuItemSair.addActionListener(e -> System.exit(0));
+        menuArquivo.add(menuItemAbrir);
+        menuArquivo.add(menuItemSalvar);
+        menuArquivo.add(menuItemSair);
+        menuBar.add(menuArquivo);
+        setJMenuBar(menuBar);
         setVisible(true);
 
-        painelDados.textArea.setText(dadosGrafo);
-
     }
-    public void salvar() {
-        System.out.println("Salvando...");
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter("c://temp//grafo.txt"))) {
-            bw.write(dadosGrafo);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+
+
+    private void abrirArquivo() {
+        JFileChooser fileChooser = new JFileChooser();
+        int escolha = fileChooser.showOpenDialog(this);
+        if (escolha == JFileChooser.APPROVE_OPTION) {
+            File arquivo = fileChooser.getSelectedFile();
+            try (Scanner scanner = new Scanner(arquivo)) {
+                StringBuilder conteudo = new StringBuilder();
+                while (scanner.hasNextLine()) {
+                    conteudo.append(scanner.nextLine()).append("\n");
+                }
+                dadosGrafo = conteudo.toString();
+                textArea.setText(dadosGrafo);
+                painelEsquerdo.revalidate();
+                textArea.repaint();
+                textArea.setText(dadosGrafo);
+                painelEsquerdo.revalidate();
+                painelEsquerdo.repaint();
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Erro ao abrir arquivo: " + ex.getMessage());
+            }
         }
+    }
+    private void salvarArquivo() {
+        JFileChooser fileChooser = new JFileChooser();
+        int escolha = fileChooser.showSaveDialog(this);
+        if (escolha == JFileChooser.APPROVE_OPTION) {
+            File arquivo = fileChooser.getSelectedFile();
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo))) {
+                String conteudo = dadosGrafo;
+                writer.write(conteudo);
+                JOptionPane.showMessageDialog(this, "Arquivo salvo com sucesso!");
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Erro ao salvar arquivo: " + ex.getMessage());
+            }
+        }
+    }
+
+    public void updateLog() {
+        StringBuilder log = new StringBuilder();
+        log.append("Tipo de Grafo: ").append(grafo.isDirecionado() ? "Direcionado" : "Não Direcionado").append("\n");
+        log.append("Número de Vértices: ").append(grafo.getNumeroVertices()).append("\n");
+        log.append("Número de Arestas: ").append(grafo.getListaArestas().size()).append("\n");
+        textLog.setText(log.toString());
+        textLog.setCaretPosition(0);
     }
 }

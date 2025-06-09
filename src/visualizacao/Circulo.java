@@ -6,7 +6,7 @@ public class Circulo {
     private int x;
     private int y;
     private int raio;
-    private Color cor;
+    private Color cor = Color.LIGHT_GRAY;
     private String rotulo;
     public Circulo(int x, int y, int raio){
         this.x = x;
@@ -15,20 +15,20 @@ public class Circulo {
     }
     public Circulo(int x, int y, int raio, String rotulo){
         this(x, y, raio);
-        this.cor = cor;
         this.rotulo = rotulo;
     }
     public void desenhar(Graphics2D g) {
         g.setColor(cor);
-        Font fonte = new Font("Arial", Font.BOLD, 12);
-        g.setFont(fonte);
+        g.fillOval(x - raio, y - raio, 2 * raio, 2 * raio);
 
-        g.setColor(cor);
+        g.setColor(Color.BLACK);
         g.drawOval(x - raio, y - raio, 2 * raio, 2 * raio);
 
+        Font fonte = new Font("Arial", Font.BOLD, 12);
+        g.setFont(fonte);
         FontMetrics fontePosicao = g.getFontMetrics();
-        int fonteX = x - 3;
-        int fonteY = y + 5;
+        int fonteX = x - fontePosicao.stringWidth(rotulo) / 2;
+        int fonteY = y + fontePosicao.getAscent() / 2;
         g.setColor(Color.BLACK);
         g.drawString(rotulo, fonteX, fonteY);
 
@@ -51,5 +51,9 @@ public class Circulo {
     }
     public String getRotulo() {
         return rotulo;
+    }
+
+    public void setCor(Color cor) {
+        this.cor = cor;
     }
 }

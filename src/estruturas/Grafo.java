@@ -1,12 +1,23 @@
 package estruturas;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class Grafo {
     private LinkedHashMap<Vertice, List<Aresta>> listaAdjacencia;
+    private boolean direcionado = false;
+
     public Grafo() {
         listaAdjacencia = new LinkedHashMap<>();
     }
+    public Grafo(boolean direcionado) {
+        this.direcionado = direcionado;
+        listaAdjacencia = new LinkedHashMap<>();
+    }
+    public boolean isDirecionado() {
+        return direcionado;
+    }
+
     public void adicionarVertice(Vertice v) {
         listaAdjacencia.put(v, new ArrayList<>());
         System.out.println("Vertice " + v.getRotulo() + " adicionado.");
@@ -15,9 +26,11 @@ public class Grafo {
         Vertice origem = e.getOrigem();
         Vertice destino = e.getDestino();
         List<Aresta> listaOrigem = listaAdjacencia.get(origem);
-        List<Aresta> listaDestino = listaAdjacencia.get(destino);
         listaOrigem.add(e);
-        listaDestino.add(e);
+        if(!e.isDirecionada()) {
+            List<Aresta> listaDestino = listaAdjacencia.get(destino);
+            listaDestino.add(e);
+        }
     }
     public int getNumeroVertices(){
         return listaAdjacencia.size();
@@ -50,43 +63,11 @@ public class Grafo {
         }
         return lista;
     }
-    public static Grafo gerarGrafo(String dadosGrafo) {
-        if(dadosGrafo==null || dadosGrafo.isEmpty()) return null;
-        Grafo grafo = new Grafo();
-        String[] linhas = dadosGrafo.split(System.lineSeparator());
-        for (String s:linhas) {
-            s = s.trim();
-            if(s.isEmpty()) continue;
-            String[] colunas = s.split("\\s*--\\s*");
-            if(colunas.length==2) {
-                String rotuloVerticeV = colunas[0].trim();
-                grafo.adicionarVertice(new Vertice(rotuloVerticeV));
 
-                String rotuloVerticeW = colunas[1].trim();
-                grafo.adicionarVertice(new Vertice(rotuloVerticeW));
-
-                Vertice v = grafo.getVertice(rotuloVerticeV);
-                Vertice w = grafo.getVertice(rotuloVerticeW);
-                Aresta e = new Aresta(v, w);
-                grafo.adicionarAresta(e);
-            }
-            /*String[] colunas = s.split(" ");
-            if(colunas.length==1) {
-                String rotuloVertice = colunas[0].trim();
-                grafo.adicionarVertice(new Vertice(rotuloVertice));
-            }
-            else if (colunas.length==2) {
-                String rotuloOrigem = colunas[0].trim();
-                String rotuloDestino = colunas[1].trim();
-                Vertice vOrigem = grafo.getVertice(rotuloOrigem);
-                Vertice vDestino = grafo.getVertice(rotuloDestino);
-                Aresta e = new Aresta(vOrigem, vDestino);
-                grafo.adicionarAresta(e);
-            }
-             */
-        }
-        return grafo;
+    public List<Aresta> getAdjacencias(Vertice v) {
+        return listaAdjacencia.getOrDefault(v, new ArrayList<>());
     }
+
     public void limpar() {
         listaAdjacencia = new LinkedHashMap<>();
     }
@@ -96,16 +77,19 @@ public class Grafo {
         dadosGrafo = dadosGrafo.replace("\r\n", ";");
         dadosGrafo = dadosGrafo.replace("\n", ";");
         String[] linhas = dadosGrafo.split(";");
-        for (String s:linhas) {
-            String[] colunas = s.split("\\s*--\\s*");
+        for (String linha:linhas) {
+            String[] colunas = linha.trim().split("\\s*(->|--)\\s*|\\s+");
             if(colunas.length==1) {
                 String rotuloVertice = colunas[0].trim();
                 adicionarVertice(new Vertice(rotuloVertice));
             }
-            else if (colunas.length==2) {
+            else if (colunas.length>=2) {
                 String rotuloOrigem = colunas[0].trim();
                 String rotuloDestino = colunas[1].trim();
                 Vertice vOrigem = getVertice(rotuloOrigem);
+                int peso = 1;
+                if(colunas.length==3) peso = Integer.parseInt(colunas[2].trim());
+                this.direcionado = linha.contains("->");
                 if(vOrigem==null) {
                     vOrigem = new Vertice(rotuloOrigem);
                     adicionarVertice(vOrigem);
@@ -115,7 +99,7 @@ public class Grafo {
                     vDestino = new Vertice(rotuloDestino);
                     adicionarVertice(vDestino);
                 }
-                Aresta e = new Aresta(vOrigem, vDestino);
+                Aresta e = new Aresta(vOrigem, vDestino, this.direcionado, peso);
                 adicionarAresta(e);
             }
         }
