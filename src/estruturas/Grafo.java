@@ -1,7 +1,6 @@
 package estruturas;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class Grafo {
     private LinkedHashMap<Vertice, List<Aresta>> listaAdjacencia;
@@ -105,9 +104,15 @@ public class Grafo {
             }
         }
     }
+
     public boolean contemCiclos() {
         //IMPLEMENTAR
         //ISSUE
         return false;
     }
+
+    public Map<Vertice, List<Aresta>> getListaAdjacencia() {
+        return listaAdjacencia;
+    }
+
 }
