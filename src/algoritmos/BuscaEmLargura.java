@@ -32,4 +32,32 @@ public class BuscaEmLargura {
 
         return caminho;
     }
+
+    private void realizarBusca(Grafo grafo, Vertice origem) {
+        Queue<Vertice> fila = new LinkedList<>();
+        fila.add(origem);
+        visitado.put(origem, true);
+
+        while (!fila.isEmpty()) {
+            Vertice atual = fila.poll(); 
+
+
+            List<Aresta> arestas = grafo.getAdjacencias(atual);
+
+            for (Aresta aresta : arestas) {
+                Vertice vizinho;
+                if (aresta.getOrigem().equals(atual)) {
+                    vizinho = aresta.getDestino();
+                } else {
+                    vizinho = aresta.getOrigem();
+                }
+
+                if (!visitado.get(vizinho)) {
+                    visitado.put(vizinho, true);
+                    anterior.put(vizinho, atual);
+                    fila.add(vizinho);
+                }
+            }
+        }
+    }
 }
