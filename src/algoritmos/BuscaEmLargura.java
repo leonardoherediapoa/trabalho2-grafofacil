@@ -20,4 +20,16 @@ public class BuscaEmLargura {
 
         realizarBusca(grafo, origem);
     }
+
+    public List<Vertice> caminhoAte(Vertice destino) {
+        List<Vertice> caminho = new ArrayList<>();
+
+        Vertice atual = destino;
+        while (atual != null) {
+            caminho.add(0, atual); 
+            atual = anterior.get(atual);
+        }
+
+        return caminho;
+    }
 }
