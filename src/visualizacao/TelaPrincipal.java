@@ -170,7 +170,14 @@ public class TelaPrincipal extends JFrame {
         menuArquivo.add(menuItemAbrir);
         menuArquivo.add(menuItemSalvar);
         menuArquivo.add(menuItemSair);
+
+
+        JMenu menuAcao = new JMenu("Acao");
+        JMenuItem menuItemGrau = new JMenuItem("Mostrar Grau dos Vertices");
+        menuAcao.add(menuItemGrau);
+
         menuBar.add(menuArquivo);
+        menuBar.add(menuAcao);
         setJMenuBar(menuBar);
         setVisible(true);
 
