@@ -1,7 +1,11 @@
 package estruturas;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.util.*;
-import java.util.regex.Pattern;
+import javax.swing.JOptionPane;
 
 public class Grafo {
     private LinkedHashMap<Vertice, List<Aresta>> listaAdjacencia;
@@ -105,6 +109,35 @@ public class Grafo {
             }
         }
     }
+
+        private boolean dfsNaoDirecionado(Vertice v, Set<Vertice> visitados, Set<Vertice> emRecursao) {
+    visitados.add(v);
+    emRecursao.add(v);
+    for (Aresta a : getAdjacencias(v)) {
+        Vertice vizinho = a.getDestino();
+        if (!visitados.contains(vizinho)) {
+            if (dfsDirecionado(vizinho, visitados, emRecursao)) return true;
+        } else if (emRecursao.contains(vizinho)) {
+            return true;
+        }
+    }
+    emRecursao.remove(v);
+    return false;
+}
+
+private boolean dfsNaoDirecionado(Vertice v, Set<Vertice> visitados, Vertice pai) {
+    visitados.add(v);
+    for (Aresta a : getAdjacencias(v)) {
+        Vertice vizinho = a.getDestino().equals(v) ? a.getOrigem() : a.getDestino();
+        if (!visitados.contains(vizinho)) {
+            if (dfsNaoDirecionado(vizinho, visitados, v)) return true;
+        } else if (!vizinho.equals(pai)) {
+            return true;
+        }
+    }
+        return false; 
+}
+
     public boolean contemCiclos() {
         Set<Vertice> visitados = new HashSet<>();
         Set<Vertice> emRecursao = new HashSet<>();
@@ -120,4 +153,13 @@ public class Grafo {
         }
         return false;
     }
+
+public void exportarParaAreaTransferenciaDot(Grafo grafo) {
+    String dot = grafo.toDot();
+    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    Transferable transferable = new StringSelection(dot);
+    clipboard.setContents(transferable, null);
+    JOptionPane.showMessageDialog(null, "Conteúdo DOT copiado para a área de transferência!");
+}
+
 }
