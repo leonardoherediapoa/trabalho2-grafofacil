@@ -7,6 +7,7 @@ import estruturas.Grafo;
 import estruturas.Vertice;
 import utils.LogManager;
 import java.util.List;
+import utils.DotConvert;
 
 import javax.swing.*;
 import java.awt.*;
@@ -253,16 +254,20 @@ public class TelaPrincipal extends JFrame {
                     conteudo.append(scanner.nextLine()).append("\n");
                 }
                 dadosGrafo = conteudo.toString();
+
+                if (arquivo.getName().toLowerCase().endsWith(".dot")) {
+                    dadosGrafo = DotConvert.converterDot(dadosGrafo);
+                }
+
                 textArea.setText(dadosGrafo);
                 painelEsquerdo.revalidate();
                 textArea.repaint();
-                textArea.setText(dadosGrafo);
-                painelEsquerdo.revalidate();
                 painelEsquerdo.repaint();
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(this, "Erro ao abrir arquivo: " + ex.getMessage());
             }
         }
+
     }
 
 
@@ -290,4 +295,10 @@ public class TelaPrincipal extends JFrame {
             }
         }
     }
+
+
+
+
+
+
 }
