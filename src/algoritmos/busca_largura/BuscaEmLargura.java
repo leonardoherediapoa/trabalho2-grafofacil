@@ -1,5 +1,6 @@
-package algoritmos;
+package algoritmos.busca_largura;
 
+import estruturas.Aresta;
 import estruturas.Grafo;
 import estruturas.Vertice;
 
