@@ -106,8 +106,18 @@ public class Grafo {
         }
     }
     public boolean contemCiclos() {
-        //IMPLEMENTAR
-        //ISSUE
+        Set<Vertice> visitados = new HashSet<>();
+        Set<Vertice> emRecursao = new HashSet<>();
+
+        for (Vertice v : getListaVertices()) {
+            if (!visitados.contains(v)) {
+                if (direcionado) {
+                    if (dfsDirecionado(v, visitados, emRecursao)) return true;
+                } else {
+                    if (dfsNaoDirecionado(v, visitados, null)) return true;
+                }
+            }
+        }
         return false;
     }
 }
