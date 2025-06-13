@@ -2,6 +2,8 @@ package algoritmos;
 
 import estruturas.*;
 
+import java.util.ArrayList;
+
 public class BuscaProfundidade {
     private Grafo grafo;
     private int origem;
@@ -17,5 +19,14 @@ public class BuscaProfundidade {
         buscarEmProfundidadeRecursivo(this.grafo, this.origem);
     }
 
-
+    private void buscarEmProfundidadeRecursivo(Grafo g, int v) {
+        percorridos[v] = true;
+        ArrayList<Integer> adjacentesDoV = g.getAdjacencias(v);
+        for(Integer w:adjacentesDoV) {
+            if(!percorridos[w]) {
+                anteriores[w] = v;
+                buscarEmProfundidadeRecursivo(g, w);
+            }
+        }
+    }
 }
