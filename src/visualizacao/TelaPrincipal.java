@@ -1,10 +1,12 @@
 package visualizacao;
 
 import algoritmos.MarcarVertices;
+import algoritmos.BuscaProfundidade;
 import estruturas.Aresta;
 import estruturas.Grafo;
 import estruturas.Vertice;
 import utils.LogManager;
+import java.util.List;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,6 +26,7 @@ public class TelaPrincipal extends JFrame {
     private JPanel painelLog;
     private JTextArea textLog;
     public JTextArea textArea;
+    private BuscaProfundidade dfs;
 
     public TelaPrincipal() {
         //dadosGrafo = "A" + System.lineSeparator() + "B" + System.lineSeparator() + "C";
@@ -112,6 +115,46 @@ public class TelaPrincipal extends JFrame {
         barraBotoes.add(btnMarcar);
 
         JButton btnDFS = new JButton("Profundidade");
+        btnDFS.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String origem = JOptionPane.showInputDialog("Informe o vértice de origem para DFS:");
+                if (origem != null && !origem.trim().isEmpty()) {
+                    try {
+                        Vertice verticeOrigem = grafo.getVertice(origem.trim());
+                        if (verticeOrigem != null) {
+                            int indiceOrigem = grafo.getListaVertices().indexOf(verticeOrigem);
+
+                            if (dfs == null) {
+                                dfs = new BuscaProfundidade(grafo, indiceOrigem);
+                            } else {
+                                dfs.executarDFS(indiceOrigem);
+                            }
+
+                            LogManager.updateLog(dfs.getRelatorioTraversia());
+
+                            List<Vertice> verticesVisitados = dfs.getVerticesVisitados();
+
+                            MarcarVertices marcador = new MarcarVertices(painelGrafo);
+                            try {
+                                marcador.marcarVertices(grafo, verticesVisitados);
+                            } catch (InterruptedException ex) {
+                                ex.printStackTrace();
+                            }
+
+                        } else {
+                            JOptionPane.showMessageDialog(TelaPrincipal.this,
+                                    "Vértice '" + origem + "' não encontrado no grafo!");
+                        }
+
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(TelaPrincipal.this,
+                                "Erro ao executar DFS: " + ex.getMessage());
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        });
 
         barraBotoes.add(btnDFS);
 
