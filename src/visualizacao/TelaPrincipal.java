@@ -125,6 +125,10 @@ public class TelaPrincipal extends JFrame {
                         if (verticeOrigem != null) {
                             int indiceOrigem = grafo.getListaVertices().indexOf(verticeOrigem);
 
+                            if (indiceOrigem == -1) {
+                                throw new RuntimeException("Inconsistência no estado do grafo");
+                            }
+
                             if (dfs == null) {
                                 dfs = new BuscaProfundidade(grafo, indiceOrigem);
                             } else {
@@ -135,12 +139,12 @@ public class TelaPrincipal extends JFrame {
 
                             List<Vertice> verticesVisitados = dfs.getVerticesVisitados();
 
-                            MarcarVertices marcador = new MarcarVertices(painelGrafo);
-                            try {
-                                marcador.marcarVertices(grafo, verticesVisitados);
-                            } catch (InterruptedException ex) {
-                                ex.printStackTrace();
+                            for (Vertice v : grafo.getListaVertices()) {
+                                painelGrafo.setCorVertice(v, Color.YELLOW);
                             }
+                            painelGrafo.repaint();
+
+                            painelGrafo.desenharVertices(verticesVisitados, Color.RED, 1000);
 
                         } else {
                             JOptionPane.showMessageDialog(TelaPrincipal.this,
@@ -150,7 +154,6 @@ public class TelaPrincipal extends JFrame {
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(TelaPrincipal.this,
                                 "Erro ao executar DFS: " + ex.getMessage());
-                        ex.printStackTrace();
                     }
                 }
             }

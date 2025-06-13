@@ -20,7 +20,7 @@ public class BuscaProfundidade {
         percorridos = new boolean[g.getNumeroVertices()];
         anteriores = new int[g.getNumeroVertices()];
 
-        for(int i = 0; i<anteriores.length; i++) anteriores[i] = -1;
+        for (int i = 0; i < anteriores.length; i++) anteriores[i] = -1;
 
         buscarEmProfundidadeRecursivo(this.origem);
     }
@@ -29,23 +29,36 @@ public class BuscaProfundidade {
         percorridos[verticeIndex] = true;
 
         Vertice vertice = vertices.get(verticeIndex);
+        List<Aresta> arestasDoVertice = grafo.getAdjacencias(vertice);
 
-        List<Aresta> arestaDoVertice = grafo.getAdjacencias(vertice);
+        for (Aresta aresta : arestasDoVertice) {
+            Vertice adjacente = null;
 
-        for (Aresta aresta : arestaDoVertice) {
-            Vertice adjacente;
-
-            if (aresta.getOrigem().equals(vertice)) {
-                adjacente = aresta.getDestino();
+            if (grafo.isDirecionado()) {
+                if (aresta.getOrigem().equals(vertice)) {
+                    adjacente = aresta.getDestino();
+                } else {
+                    continue;
+                }
             } else {
-                adjacente = aresta.getOrigem();
+                if (aresta.getOrigem().equals(vertice)) {
+                    adjacente = aresta.getDestino();
+                } else {
+                    adjacente = aresta.getOrigem();
+                }
             }
 
-            int indiceAdjacente = vertices.indexOf(adjacente);
+            if (adjacente != null) {
+                int indiceAdjacente = vertices.indexOf(adjacente);
 
-            if (indiceAdjacente != -1 && !percorridos[indiceAdjacente]) {
-                anteriores[indiceAdjacente] = verticeIndex;
-                buscarEmProfundidadeRecursivo(indiceAdjacente);
+                if (indiceAdjacente == -1) {
+                    continue;
+                }
+
+                if (indiceAdjacente >= 0 && indiceAdjacente < vertices.size() && !percorridos[indiceAdjacente]) {
+                    anteriores[indiceAdjacente] = verticeIndex;
+                    buscarEmProfundidadeRecursivo(indiceAdjacente);
+                }
             }
         }
     }
@@ -60,23 +73,11 @@ public class BuscaProfundidade {
         percorridos = new boolean[grafo.getNumeroVertices()];
         anteriores = new int[grafo.getNumeroVertices()];
 
-        for(int i = 0; i < anteriores.length; i++) {
+        for (int i = 0; i < anteriores.length; i++) {
             anteriores[i] = -1;
         }
 
         buscarEmProfundidadeRecursivo(this.origem);
-    }
-
-    public boolean[] getPercorridos() {
-        return percorridos;
-    }
-
-    public int[] getAnteriores() {
-        return anteriores;
-    }
-
-    public int getOrigem() {
-        return origem;
     }
 
     public List<Vertice> getVerticesVisitados() {
@@ -89,23 +90,27 @@ public class BuscaProfundidade {
         return visitados;
     }
 
-    public boolean foiVisitado(String rotuloVertice) {
-        Vertice v = grafo.getVertice(rotuloVertice);
-        if (v != null) {
-            int indice = vertices.indexOf(v);
-            return indice != -1 && percorridos[indice];
-        }
-        return false;
-    }
-
     public String getRelatorioTraversia() {
         StringBuilder relatorio = new StringBuilder();
-        relatorio.append("DFS a partir do vértice: ").append(vertices.get(origem).getRotulo()).append("\n");
+        relatorio.append("=== RELATÓRIO DFS ===\n");
+        relatorio.append("Origem: ").append(vertices.get(origem).getRotulo()).append("\n");
         relatorio.append("Vértices visitados: ");
 
+        int totalVisitados = 0;
         for (int i = 0; i < percorridos.length; i++) {
             if (percorridos[i]) {
                 relatorio.append(vertices.get(i).getRotulo()).append(" ");
+                totalVisitados++;
+            }
+        }
+
+        relatorio.append("\nTotal visitados: ").append(totalVisitados).append(" de ").append(vertices.size());
+
+        relatorio.append("\nÁrvore DFS (vértice <- predecessor):\n");
+        for (int i = 0; i < anteriores.length; i++) {
+            if (percorridos[i]) {
+                String predecessor = (anteriores[i] == -1) ? "RAIZ" : vertices.get(anteriores[i]).getRotulo();
+                relatorio.append("  ").append(vertices.get(i).getRotulo()).append(" <- ").append(predecessor).append("\n");
             }
         }
 
