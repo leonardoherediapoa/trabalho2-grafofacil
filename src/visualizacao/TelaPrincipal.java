@@ -29,7 +29,8 @@ public class TelaPrincipal extends JFrame {
     private BuscaProfundidade dfs;
 
     public TelaPrincipal() {
-        // dadosGrafo = "A" + System.lineSeparator() + "B" + System.lineSeparator() +
+        //  dadosGrafo = "A" + System.lineSeparator() + "B" + System.lineSeparator() +
+        //
         // "C";
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 800);
@@ -240,6 +241,7 @@ public class TelaPrincipal extends JFrame {
 
     }
 
+
     private void abrirArquivo() {
         JFileChooser fileChooser = new JFileChooser();
         int escolha = fileChooser.showOpenDialog(this);
@@ -262,6 +264,7 @@ public class TelaPrincipal extends JFrame {
             }
         }
     }
+
 
     private void salvarArquivo() {
         JFileChooser fileChooser = new JFileChooser();
