@@ -4,8 +4,12 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 public class Grafo {
     private LinkedHashMap<Vertice, List<Aresta>> listaAdjacencia;
@@ -162,4 +166,29 @@ public void exportarParaAreaTransferenciaDot(Grafo grafo) {
     JOptionPane.showMessageDialog(null, "Conteúdo DOT copiado para a área de transferência!");
 }
 
+    public void exportarParaArquivoDot(Grafo grafo) {
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Arquivos DOT", "dot"));
+
+        int escolha = fileChooser.showSaveDialog(null);
+
+        if (escolha == JFileChooser.APPROVE_OPTION) {
+            File arquivo = fileChooser.getSelectedFile();
+
+            if (!arquivo.getName().toLowerCase().endsWith(".dot")) {
+                arquivo = new File(arquivo.getAbsolutePath() + ".dot");
+            }
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo))) {
+
+                writer.write(grafo.toDot());
+
+                JOptionPane.showMessageDialog(null, "Arquivo DOT exportado com sucesso!");
+
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(null, "Erro ao exportar arquivo DOT: " + ex.getMessage());
+            }
+        }
+    }
 }

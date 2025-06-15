@@ -82,7 +82,7 @@ public class TelaPrincipal extends JFrame {
         });
 
         JButton btnExportarDot = new JButton("Exportar DOT");
-        btnExportarDot.addActionListener(e -> exportarParaArquivoDot());
+        btnExportarDot.addActionListener(e -> grafo.exportarParaArquivoDot(grafo));
 
         JButton btnCopiarDot = new JButton("Copiar DOT");
         btnCopiarDot.addActionListener(e -> grafo.exportarParaAreaTransferenciaDot(grafo));
