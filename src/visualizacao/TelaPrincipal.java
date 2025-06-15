@@ -23,6 +23,7 @@ import utils.DotConvert;
 
 public class TelaPrincipal extends JFrame {
 
+
     public final Grafo grafo;
     public String dadosGrafo;
     public PainelGrafo painelGrafo;
@@ -38,8 +39,7 @@ public class TelaPrincipal extends JFrame {
     private BuscaProfundidade dfs;
 
     public TelaPrincipal() {
-        //  dadosGrafo = "A" + System.lineSeparator() + "B" + System.lineSeparator() +
-        //
+        // dadosGrafo = "A" + System.lineSeparator() + "B" + System.lineSeparator() +
         // "C";
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 800);
@@ -265,20 +265,7 @@ public class TelaPrincipal extends JFrame {
         add(painelDireito, BorderLayout.CENTER);
         add(painelDados, BorderLayout.WEST);
 
-        criarMenu();
-
-
-
-
-        setJMenuBar(menuBar);
-        setVisible(true);
-
-        LogManager.configurar(textLog, grafo);
-
-    }
-
-    private void criarMenu() {
-        menuBar = new JMenuBar();
+        JMenuBar menuBar = new JMenuBar();
         JMenu menuArquivo = new JMenu("Arquivo");
 
         JMenuItem menuItemAbrir = new JMenuItem("Abrir");
@@ -303,26 +290,9 @@ public class TelaPrincipal extends JFrame {
             }
         });
 
-        JMenuItem menuInterImportarDot = new JMenuItem("Importar DOT");
-        menuInterImportarDot.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                abrirArquivo(); //TROCAR AQUI PARA O IMPORTAR DOT
-                System.out.println(textArea.getText());
-                SwingUtilities.invokeLater(() -> {
-                    painelEsquerdo.invalidate();
-                    painelEsquerdo.revalidate();
-                    painelEsquerdo.repaint();
-                });
-            }
-        });
-
         JMenuItem menuItemSair = new JMenuItem("Sair");
         menuItemSair.addActionListener(e -> System.exit(0));
-
-
         menuArquivo.add(menuItemAbrir);
-        menuArquivo.add(menuImportarDot);
         menuArquivo.add(menuItemSalvar);
         menuArquivo.add(menuItemSair);
 
@@ -335,10 +305,15 @@ public class TelaPrincipal extends JFrame {
         setJMenuBar(menuBar);
         setVisible(true);
 
+        LogManager.configurar(textLog, grafo);
+        LogManager.updateLog("conteudo adicional");
 
     }
+
     private void criarBotoes() {
+
     }
+
     private void abrirArquivo() {
         JFileChooser fileChooser = new JFileChooser();
         int escolha = fileChooser.showOpenDialog(this);
@@ -365,7 +340,6 @@ public class TelaPrincipal extends JFrame {
         }
 
     }
-
 
     private void salvarArquivo() {
         JFileChooser fileChooser = new JFileChooser();
