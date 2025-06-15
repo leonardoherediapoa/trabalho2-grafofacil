@@ -28,6 +28,8 @@ public class TelaPrincipal extends JFrame {
     private JTextArea textLog;
     public JTextArea textArea;
     private BuscaProfundidade dfs;
+    private JMenuBar menuBar;
+
 
     public TelaPrincipal() {
         //  dadosGrafo = "A" + System.lineSeparator() + "B" + System.lineSeparator() +
@@ -193,6 +195,20 @@ public class TelaPrincipal extends JFrame {
         add(painelDireito, BorderLayout.CENTER);
         add(painelDados, BorderLayout.WEST);
 
+        criarMenu();
+
+        setJMenuBar(menuBar);
+        setVisible(true);
+
+        LogManager.configurar(textLog, grafo);
+        LogManager.updateLog("conteudo adicional");
+
+    }
+
+    private void criarBotoes() {
+
+    }
+    private void criarMenu() {
         JMenuBar menuBar = new JMenuBar();
         JMenu menuArquivo = new JMenu("Arquivo");
 
@@ -218,6 +234,20 @@ public class TelaPrincipal extends JFrame {
             }
         });
 
+        JMenuItem menuInterImportarDot = new JMenuItem("Importar DOT");
+        menuInterImportarDot.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                abrirArquivo(); //TROCAR AQUI PARA O IMPORTAR DOT
+                System.out.println(textArea.getText());
+                SwingUtilities.invokeLater(() -> {
+                    painelEsquerdo.invalidate();
+                    painelEsquerdo.revalidate();
+                    painelEsquerdo.repaint();
+                });
+            }
+        });
+
         JMenuItem menuItemSair = new JMenuItem("Sair");
         menuItemSair.addActionListener(e -> System.exit(0));
         menuArquivo.add(menuItemAbrir);
@@ -235,10 +265,6 @@ public class TelaPrincipal extends JFrame {
 
         LogManager.configurar(textLog, grafo);
         LogManager.updateLog("conteudo adicional");
-
-    }
-
-    private void criarBotoes() {
 
     }
 
@@ -294,6 +320,9 @@ public class TelaPrincipal extends JFrame {
                 JOptionPane.showMessageDialog(this, "Erro ao salvar arquivo: " + ex.getMessage());
             }
         }
+    }
+    private void importarDot() {
+        //IMPLEMENTAR AQUI
     }
 
 
