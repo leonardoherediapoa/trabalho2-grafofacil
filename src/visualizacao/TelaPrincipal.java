@@ -6,7 +6,6 @@ import estruturas.Aresta;
 import estruturas.Grafo;
 import estruturas.Vertice;
 import utils.LogManager;
-import java.util.List;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,6 +25,8 @@ public class TelaPrincipal extends JFrame {
     private JPanel painelLog;
     private JTextArea textLog;
     public JTextArea textArea;
+    private JMenuBar menuBar;
+
     private BuscaProfundidade dfs;
 
     public TelaPrincipal() {
@@ -186,6 +187,20 @@ public class TelaPrincipal extends JFrame {
         add(painelDireito, BorderLayout.CENTER);
         add(painelDados, BorderLayout.WEST);
 
+        criarMenu();
+
+        setJMenuBar(menuBar);
+        setVisible(true);
+
+        LogManager.configurar(textLog, grafo);
+        LogManager.updateLog("conteudo adicional");
+
+    }
+
+    private void criarBotoes() {
+
+    }
+    private void criarMenu() {
         JMenuBar menuBar = new JMenuBar();
         JMenu menuArquivo = new JMenu("Arquivo");
 
