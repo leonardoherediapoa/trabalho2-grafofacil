@@ -1,7 +1,6 @@
 package estruturas;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class Grafo {
     private LinkedHashMap<Vertice, List<Aresta>> listaAdjacencia;
@@ -104,10 +103,28 @@ public class Grafo {
                 adicionarAresta(e);
             }
         }
+        System.out.println (contemCiclos());
     }
     public boolean contemCiclos() {
-        //IMPLEMENTAR
-        //ISSUE
-        return false;
+        Set<Vertice> visitados = new HashSet<>();
+
+    for (Vertice v : this.getListaVertices()) {
+        if (!visitados.contains(v)) {
+            Stack<Vertice> pilha = new Stack<>();
+            Map<Vertice, Vertice> pai = new HashMap<>();
+
+            pilha.push(v);
+            pai.put(v, null);
+
+            while (!pilha.isEmpty()) {
+                Vertice atual = pilha.pop();
+                visitados.add(atual);
+
+                List<Vertice> vizinhos = new ArrayList<>();
+                //falta verificar os vizinhos e identificar o ciclo
+            }
+        }
+    }
+    return false; 
     }
 }
