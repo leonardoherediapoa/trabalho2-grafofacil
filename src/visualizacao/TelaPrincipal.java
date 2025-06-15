@@ -16,6 +16,8 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.Scanner;
 import java.util.List;
+import utils.DotConvert;
+
 
 
 public class TelaPrincipal extends JFrame {
@@ -199,16 +201,18 @@ public class TelaPrincipal extends JFrame {
 
         criarMenu();
 
+
+
+
         setJMenuBar(menuBar);
         setVisible(true);
 
         LogManager.configurar(textLog, grafo);
-        LogManager.updateLog("conteudo adicional");
 
     }
 
     private void criarMenu() {
-        JMenuBar menuBar = new JMenuBar();
+        menuBar = new JMenuBar();
         JMenu menuArquivo = new JMenu("Arquivo");
 
         JMenuItem menuItemAbrir = new JMenuItem("Abrir");
@@ -249,7 +253,10 @@ public class TelaPrincipal extends JFrame {
 
         JMenuItem menuItemSair = new JMenuItem("Sair");
         menuItemSair.addActionListener(e -> System.exit(0));
+
+
         menuArquivo.add(menuItemAbrir);
+        menuArquivo.add(menuImportarDot);
         menuArquivo.add(menuItemSalvar);
         menuArquivo.add(menuItemSair);
 
@@ -262,8 +269,6 @@ public class TelaPrincipal extends JFrame {
         setJMenuBar(menuBar);
         setVisible(true);
 
-        LogManager.configurar(textLog, grafo);
-        LogManager.updateLog("conteudo adicional");
 
     }
     private void criarBotoes() {
@@ -322,10 +327,8 @@ public class TelaPrincipal extends JFrame {
     }
     private void importarDot() {
         //IMPLEMENTAR AQUI
+        System.out.println("importar dot...");
     }
-
-
-
 
 
 
