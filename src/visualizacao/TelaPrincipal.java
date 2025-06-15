@@ -135,7 +135,7 @@ public class TelaPrincipal extends JFrame {
                                 dfs.executarDFS(indiceOrigem);
                             }
 
-                            LogManager.updateLog(dfs.getRelatorioTraversia());
+                            LogManager.updateLog(dfs.getRelatorioTravessia());
 
                             List<Vertice> verticesVisitados = dfs.getVerticesVisitados();
 

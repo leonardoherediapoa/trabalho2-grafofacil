@@ -90,7 +90,7 @@ public class BuscaProfundidade {
         return visitados;
     }
 
-    public String getRelatorioTraversia() {
+    public String getRelatorioTravessia() {
         StringBuilder relatorio = new StringBuilder();
         relatorio.append("=== RELATÓRIO DFS ===\n");
         relatorio.append("Origem: ").append(vertices.get(origem).getRotulo()).append("\n");
