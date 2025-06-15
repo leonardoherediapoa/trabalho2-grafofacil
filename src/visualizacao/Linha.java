@@ -9,7 +9,7 @@ public class Linha {
     private int y2;
     private String rotulo;
 
-    public Linha(int x1, int y1, int x2, int y2, String rotulo){
+    public Linha(int x1, int y1, int x2, int y2, String rotulo) {
         this.x1 = x1;
         this.y1 = y1;
         this.x2 = x2;
@@ -19,7 +19,22 @@ public class Linha {
 
     public void desenhar(Graphics2D g) {
         g.setColor(Color.BLACK);
-        g.drawLine(x1,y1,x2,y2);
+        g.drawLine(x1, y1, x2, y2);
+
+        int midX = (x1 + x2) / 2;
+        int midY = (y1 + y2) / 2;
+
+        Font fonte = new Font("Arial", Font.BOLD, 12);
+        g.setFont(fonte);
+        FontMetrics metrics = g.getFontMetrics(fonte);
+        int textWidth = metrics.stringWidth(rotulo);
+        int textHeight = metrics.getHeight();
+
+        g.setColor(Color.WHITE);
+        g.fillRect(midX - textWidth / 2 - 2, midY - textHeight / 2, textWidth + 4, textHeight);
+
+        g.setColor(Color.BLUE);
+        g.drawString(rotulo, midX - textWidth / 2, midY + metrics.getAscent() / 2);
     }
 
     public void desenharSeta(Graphics2D g) {
@@ -32,14 +47,21 @@ public class Linha {
 
         g.setColor(Color.BLACK);
         g.drawLine(x1, y1, x2, y2);
-        g.fillPolygon(new int[]{x2, xArrow1, xArrow2}, new int[]{y2, yArrow1, yArrow2}, 3);
+        g.fillPolygon(new int[] { x2, xArrow1, xArrow2 }, new int[] { y2, yArrow1, yArrow2 }, 3);
 
         int midX = (x1 + x2) / 2;
         int midY = (y1 + y2) / 2;
 
-        g.setFont(new Font("Arial", Font.BOLD, 12));
-        g.setColor(Color.BLUE);
-        g.drawString(rotulo, midX, midY);
-    }
+        Font fonte = new Font("Arial", Font.BOLD, 12);
+        g.setFont(fonte);
+        FontMetrics metrics = g.getFontMetrics(fonte);
+        int textWidth = metrics.stringWidth(rotulo);
+        int textHeight = metrics.getHeight();
 
+        g.setColor(Color.WHITE);
+        g.fillRect(midX - textWidth / 2 - 2, midY - textHeight / 2, textWidth + 4, textHeight);
+
+        g.setColor(Color.BLUE);
+        g.drawString(rotulo, midX - textWidth / 2, midY + metrics.getAscent() / 2);
+    }
 }

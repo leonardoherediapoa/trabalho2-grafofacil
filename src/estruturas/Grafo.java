@@ -46,7 +46,8 @@ public class Grafo {
             resultado = resultado + "\t" + v.getRotulo() + ";" + System.lineSeparator();
         }
         for (Aresta e : getListaArestas()) {
-            resultado += "\t" + e.getOrigem().getRotulo() + "--" + e.getDestino().getRotulo() + ";" + System.lineSeparator();
+            resultado += "\t" + e.getOrigem().getRotulo() + "--" + e.getDestino().getRotulo() + ";"
+                    + System.lineSeparator();
         }
         resultado += "}";
         return resultado;
@@ -94,45 +95,74 @@ public class Grafo {
         dadosGrafo = dadosGrafo.replace("\n", ";");
         String[] linhas = dadosGrafo.split(";");
         for (String linha : linhas) {
-            String[] colunas = linha.trim().split("\\s*(->|--)\\s*|\\s+");
-            if (colunas.length == 1 || (colunas.length == 3 && colunas[1].matches("\\d+"))) {
-                String rotuloVertice = colunas[0].trim();
-                int x = -1, y = -1;
-                if (colunas.length == 3) {
+            linha = linha.trim();
+            if (linha.isEmpty()) {
+                continue;
+            }
+
+            if (linha.contains("->") || linha.contains("--")) {
+                boolean isDirecionada = linha.contains("->");
+                String[] partes;
+                if (isDirecionada) {
+                    partes = linha.split("->");
+                } else {
+                    partes = linha.split("--");
+                }
+
+                if (partes.length < 2) {
+                    continue;
+                }
+
+                String rotuloOrigem = partes[0].trim();
+                String[] destinoPeso = partes[1].trim().split("\\s+");
+                String rotuloDestino = destinoPeso[0].trim();
+
+                int peso = 1; // peso padrao
+                if (destinoPeso.length > 1) {
                     try {
-                        x = Integer.parseInt(colunas[1]);
-                        y = Integer.parseInt(colunas[2]);
+                        peso = Integer.parseInt(destinoPeso[1].trim());
                     } catch (NumberFormatException ex) {
+                        System.out.println("Peso inválido para aresta: " + destinoPeso[1].trim());
+                        peso = 1; // se o peso não for um número usa o padrão
                     }
                 }
-                adicionarVertice(new Vertice(rotuloVertice, x, y));
-            } else if (colunas.length >= 2) {
-                String rotuloOrigem = colunas[0].trim();
-                String rotuloDestino = colunas[1].trim();
+
                 Vertice vOrigem = getVertice(rotuloOrigem);
-                int peso = 1;
-                if (colunas.length == 3) {
-                    peso = Integer.parseInt(colunas[2].trim());
-                }
-                this.direcionado = linha.contains("->");
                 if (vOrigem == null) {
                     vOrigem = new Vertice(rotuloOrigem);
                     adicionarVertice(vOrigem);
                 }
+
                 Vertice vDestino = getVertice(rotuloDestino);
                 if (vDestino == null) {
                     vDestino = new Vertice(rotuloDestino);
                     adicionarVertice(vDestino);
                 }
-                Aresta e = new Aresta(vOrigem, vDestino, this.direcionado, peso);
+
+                this.direcionado = isDirecionada;
+                Aresta e = new Aresta(vOrigem, vDestino, isDirecionada, peso);
                 adicionarAresta(e);
+            } else {
+                String[] partes = linha.split("\\s+");
+                if (partes.length == 1) {
+                    adicionarVertice(new Vertice(partes[0]));
+                } else if (partes.length >= 3) {
+                    try {
+                        String rotulo = partes[0];
+                        int x = Integer.parseInt(partes[1]);
+                        int y = Integer.parseInt(partes[2]);
+                        adicionarVertice(new Vertice(rotulo, x, y));
+                    } catch (NumberFormatException e) {
+                        adicionarVertice(new Vertice(partes[0]));
+                    }
+                }
             }
         }
     }
 
     public boolean contemCiclos() {
-        //IMPLEMENTAR
-        //ISSUE
+        // IMPLEMENTAR
+        // ISSUE
         return false;
     }
 }

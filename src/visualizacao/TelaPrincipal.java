@@ -15,8 +15,8 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.Scanner;
 
-
 public class TelaPrincipal extends JFrame {
+
     public final Grafo grafo;
     public String dadosGrafo;
     public PainelGrafo painelGrafo;
@@ -29,7 +29,8 @@ public class TelaPrincipal extends JFrame {
     private BuscaProfundidade dfs;
 
     public TelaPrincipal() {
-        //dadosGrafo = "A" + System.lineSeparator() + "B" + System.lineSeparator() + "C";
+        // dadosGrafo = "A" + System.lineSeparator() + "B" + System.lineSeparator() +
+        // "C";
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 800);
         setLocationRelativeTo(null);
@@ -82,20 +83,24 @@ public class TelaPrincipal extends JFrame {
 
         barraBotoes.add(botaoAbrir);
         barraBotoes.add(botaoSalvar);
-
         btnAplicar.addActionListener(new ActionListener() {
-                                         @Override
-                                         public void actionPerformed(ActionEvent e) {
-                                             System.out.println("Clicou no Aplicar da Tela Principal");
-                                             dadosGrafo = textArea.getText();
-                                             painelGrafo.limpar();
-                                             grafo.atualizarGrafo(dadosGrafo);
-                                             painelGrafo.desenharGrafo();
-                                             painelGrafo.setVisible(true);
-                                             painelGrafo.repaint();
-                                         }
-                                     }
-        );
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Clicou no Aplicar da Tela Principal");
+                dadosGrafo = textArea.getText();
+                painelGrafo.limpar();
+                grafo.atualizarGrafo(dadosGrafo);
+
+                painelGrafo.desenharGrafo();
+                painelGrafo.setVisible(true);
+                painelGrafo.repaint();
+
+                SwingUtilities.invokeLater(() -> {
+                    painelGrafo.revalidate();
+                    painelGrafo.repaint();
+                });
+            }
+        });
 
         JButton btnMarcar = new JButton("Marcar Vertices");
         btnMarcar.addActionListener(new ActionListener() {
@@ -217,7 +222,6 @@ public class TelaPrincipal extends JFrame {
         menuArquivo.add(menuItemSalvar);
         menuArquivo.add(menuItemSair);
 
-
         JMenu menuAcao = new JMenu("Acao");
         JMenuItem menuItemGrau = new JMenuItem("Mostrar Grau dos Vertices");
         menuAcao.add(menuItemGrau);
@@ -235,6 +239,7 @@ public class TelaPrincipal extends JFrame {
     private void criarBotoes() {
 
     }
+
     private void abrirArquivo() {
         JFileChooser fileChooser = new JFileChooser();
         int escolha = fileChooser.showOpenDialog(this);
@@ -257,22 +262,29 @@ public class TelaPrincipal extends JFrame {
             }
         }
     }
+
     private void salvarArquivo() {
         JFileChooser fileChooser = new JFileChooser();
         int escolha = fileChooser.showSaveDialog(this);
         if (escolha == JFileChooser.APPROVE_OPTION) {
             File arquivo = fileChooser.getSelectedFile();
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo))) {
-                String conteudo = dadosGrafo;
-                writer.write(conteudo);
+                // salva vertice com a coordenada
+                for (Vertice v : grafo.getListaVertices()) {
+                    writer.write(v.getRotulo() + " " + v.getX() + " " + v.getY());
+                    writer.newLine();
+                }
+                // salva arestas
+                for (Aresta a : grafo.getListaArestas()) {
+                    String sep = a.isDirecionada() ? "->" : "--";
+                    writer.write(a.getOrigem().getRotulo() + " " + sep + " " + a.getDestino().getRotulo() + " "
+                            + a.getPeso());
+                    writer.newLine();
+                }
                 JOptionPane.showMessageDialog(this, "Arquivo salvo com sucesso!");
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(this, "Erro ao salvar arquivo: " + ex.getMessage());
             }
         }
     }
-
-
-
-
 }
