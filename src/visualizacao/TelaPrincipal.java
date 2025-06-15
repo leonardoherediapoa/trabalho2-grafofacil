@@ -15,6 +15,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.Scanner;
+import java.util.List;
+
 
 public class TelaPrincipal extends JFrame {
 
@@ -205,9 +207,6 @@ public class TelaPrincipal extends JFrame {
 
     }
 
-    private void criarBotoes() {
-
-    }
     private void criarMenu() {
         JMenuBar menuBar = new JMenuBar();
         JMenu menuArquivo = new JMenu("Arquivo");
@@ -267,8 +266,8 @@ public class TelaPrincipal extends JFrame {
         LogManager.updateLog("conteudo adicional");
 
     }
-
-
+    private void criarBotoes() {
+    }
     private void abrirArquivo() {
         JFileChooser fileChooser = new JFileChooser();
         int escolha = fileChooser.showOpenDialog(this);
