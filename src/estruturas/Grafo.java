@@ -105,8 +105,9 @@ public class Grafo {
         }
         System.out.println (contemCiclos());
     }
+
     public boolean contemCiclos() {
-        Set<Vertice> visitados = new HashSet<>();
+    Set<Vertice> visitados = new HashSet<>();
 
     for (Vertice v : this.getListaVertices()) {
         if (!visitados.contains(v)) {
@@ -121,10 +122,27 @@ public class Grafo {
                 visitados.add(atual);
 
                 List<Vertice> vizinhos = new ArrayList<>();
-                //falta verificar os vizinhos e identificar o ciclo
+                for (Aresta a : this.getListaArestas()) {
+                    if (a.getOrigem().equals(atual)) {
+                        vizinhos.add(a.getDestino());
+                    } else if (a.getDestino().equals(atual)) {
+                        vizinhos.add(a.getOrigem());
+                    }
+                }
+
+                for (Vertice vizinho : vizinhos) {
+                    if (!visitados.contains(vizinho)) {
+                        pilha.push(vizinho);
+                        pai.put(vizinho, atual);
+                    } else if (!vizinho.equals(pai.get(atual))) {
+                        // Vizinho já visitado e não é o pai, então há ciclo
+                        return true;
+                    }
+                }
             }
         }
     }
-    return false; 
-    }
+    return false;
+}
+
 }
