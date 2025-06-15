@@ -1,7 +1,15 @@
 package estruturas;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
-import java.util.regex.Pattern;
+import javax.swing.*;
 
 public class Grafo {
     private LinkedHashMap<Vertice, List<Aresta>> listaAdjacencia;
@@ -105,9 +113,82 @@ public class Grafo {
             }
         }
     }
+
+        private boolean dfsNaoDirecionado(Vertice v, Set<Vertice> visitados, Set<Vertice> emRecursao) {
+    visitados.add(v);
+    emRecursao.add(v);
+    for (Aresta a : getAdjacencias(v)) {
+        Vertice vizinho = a.getDestino();
+        if (!visitados.contains(vizinho)) {
+            if (dfsDirecionado(vizinho, visitados, emRecursao)) return true;
+        } else if (emRecursao.contains(vizinho)) {
+            return true;
+        }
+    }
+    emRecursao.remove(v);
+    return false;
+}
+
+private boolean dfsNaoDirecionado(Vertice v, Set<Vertice> visitados, Vertice pai) {
+    visitados.add(v);
+    for (Aresta a : getAdjacencias(v)) {
+        Vertice vizinho = a.getDestino().equals(v) ? a.getOrigem() : a.getDestino();
+        if (!visitados.contains(vizinho)) {
+            if (dfsNaoDirecionado(vizinho, visitados, v)) return true;
+        } else if (!vizinho.equals(pai)) {
+            return true;
+        }
+    }
+        return false; 
+}
+
     public boolean contemCiclos() {
-        //IMPLEMENTAR
-        //ISSUE
+        Set<Vertice> visitados = new HashSet<>();
+        Set<Vertice> emRecursao = new HashSet<>();
+
+        for (Vertice v : getListaVertices()) {
+            if (!visitados.contains(v)) {
+                if (direcionado) {
+                    if (dfsDirecionado(v, visitados, emRecursao)) return true;
+                } else {
+                    if (dfsNaoDirecionado(v, visitados, null)) return true;
+                }
+            }
+        }
         return false;
+    }
+
+public void exportarParaAreaTransferenciaDot(Grafo grafo) {
+    String dot = grafo.toDot();
+    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    Transferable transferable = new StringSelection(dot);
+    clipboard.setContents(transferable, null);
+    JOptionPane.showMessageDialog(null, "Conteúdo DOT copiado para a área de transferência!");
+}
+
+    public void exportarParaArquivoDot(Grafo grafo) {
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Arquivos DOT", "dot"));
+
+        int escolha = fileChooser.showSaveDialog(null);
+
+        if (escolha == JFileChooser.APPROVE_OPTION) {
+            File arquivo = fileChooser.getSelectedFile();
+
+            if (!arquivo.getName().toLowerCase().endsWith(".dot")) {
+                arquivo = new File(arquivo.getAbsolutePath() + ".dot");
+            }
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo))) {
+
+                writer.write(grafo.toDot());
+
+                JOptionPane.showMessageDialog(null, "Arquivo DOT exportado com sucesso!");
+
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(null, "Erro ao exportar arquivo DOT: " + ex.getMessage());
+            }
+        }
     }
 }

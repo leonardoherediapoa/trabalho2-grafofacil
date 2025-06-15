@@ -6,7 +6,10 @@ import estruturas.Aresta;
 import estruturas.Grafo;
 import estruturas.Vertice;
 import utils.LogManager;
-
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.Toolkit;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -15,6 +18,7 @@ import java.io.*;
 import java.util.Scanner;
 import java.util.List;
 import utils.DotConvert;
+
 
 
 
@@ -84,6 +88,14 @@ public class TelaPrincipal extends JFrame {
             }
         });
 
+        JButton btnExportarDot = new JButton("Exportar DOT");
+        btnExportarDot.addActionListener(e -> grafo.exportarParaArquivoDot(grafo));
+
+        JButton btnCopiarDot = new JButton("Copiar DOT");
+        btnCopiarDot.addActionListener(e -> grafo.exportarParaAreaTransferenciaDot(grafo));
+
+        barraBotoes.add(btnCopiarDot);
+        barraBotoes.add(btnExportarDot);
         barraBotoes.add(botaoAbrir);
         barraBotoes.add(botaoSalvar);
 

@@ -3,14 +3,12 @@ package visualizacao;
 import estruturas.Aresta;
 import estruturas.Grafo;
 import estruturas.Vertice;
-
-import javax.swing.*;
-import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
+import javax.swing.*;
 
 public class PainelGrafo extends JPanel {
     private Grafo grafo;
