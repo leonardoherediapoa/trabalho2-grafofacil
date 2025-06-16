@@ -246,15 +246,15 @@ public class TelaPrincipal extends JFrame {
     private void exportarParaArquivoDot() {
 
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Arquivos DOT", "dot"));
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Arquivos DOT", "txt"));
 
         int escolha = fileChooser.showSaveDialog(null);
 
         if (escolha == JFileChooser.APPROVE_OPTION) {
             File arquivo = fileChooser.getSelectedFile();
 
-            if (!arquivo.getName().toLowerCase().endsWith(".dot")) {
-                arquivo = new File(arquivo.getAbsolutePath() + ".dot");
+            if (!arquivo.getName().toLowerCase().endsWith(".txt")) {
+                arquivo = new File(arquivo.getAbsolutePath() + ".txt");
             }
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo))) {
