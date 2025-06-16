@@ -12,10 +12,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 import java.util.List;
+
 import utils.DotConvert;
 
 
@@ -76,7 +75,9 @@ public class TelaPrincipal extends JFrame {
         setJMenuBar(menuBar);
         setVisible(true);
 
-        LogManager.configurar(textLog, grafo);
+        GeradorGrafoAleatorio grafoAleatorio = new GeradorGrafoAleatorio();
+        textArea.setText(grafoAleatorio.gerarGrafo(5, true));
+        aplicar();
 
     }
 
@@ -332,31 +333,11 @@ public class TelaPrincipal extends JFrame {
                 );
                 return;
             }
-        }
-        textArea.setText(gerarGrafoAleatorio2());
-
-    }
-    private String gerarGrafoAleatorio2() {
-        char[] listaVertices = new char[5];
-        int numArestas = 10;
-        for (int i = 0; i < listaVertices.length; i++) {
-            listaVertices[i] = (char) ('A' + i);
-        }
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 5; i++) {
-            char v = listaVertices[random.nextInt(listaVertices.length)];
-            char w = listaVertices[i];
-            while (v == w) w = listaVertices[random.nextInt(listaVertices.length)];
-            int peso = random.nextInt(10) + 1;
-            sb.append(v)
-                    .append(" -- ")
-                    .append(w)
-                    .append(" ")
-                    .append(peso)
-                    .append(System.lineSeparator());
+            GeradorGrafoAleatorio g = new GeradorGrafoAleatorio();
+            textArea.setText(g.gerarGrafo(quantidadeVertices, direcionado));
         }
 
-        return sb.toString();
+
     }
+
 }
