@@ -154,25 +154,5 @@ public class Grafo {
         return false;
     }
 
-    public boolean contemCiclos() {
-        Set<Vertice> visitados = new HashSet<>();
-        Set<Vertice> emRecursao = new HashSet<>();
-
-        for (Vertice v : getListaVertices()) {
-            if (!visitados.contains(v)) {
-                if (direcionado) {
-                    if (dfsDirecionado(v, visitados, emRecursao)) {
-                        return true;
-                    }
-                } else {
-                    if (dfsNaoDirecionado(v, visitados, null)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
     
 }
