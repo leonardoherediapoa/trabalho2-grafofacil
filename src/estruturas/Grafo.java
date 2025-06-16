@@ -103,7 +103,6 @@ public class Grafo {
                 adicionarAresta(e);
             }
         }
-        System.out.println (contemCiclos());
     }
 
     public boolean contemCiclos() {
@@ -135,7 +134,6 @@ public class Grafo {
                         pilha.push(vizinho);
                         pai.put(vizinho, atual);
                     } else if (!vizinho.equals(pai.get(atual))) {
-                        // Vizinho já visitado e não é o pai, então há ciclo
                         return true;
                     }
                 }
