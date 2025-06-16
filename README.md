@@ -17,3 +17,5 @@ As entregas sao o proprio codigo junto com a documentacao dentro do proprio gith
 Voce pode criar um arquivo README.md dentro de cada pasta e ele sera automaticamente exibido.
 
 A documentacao deve ser feita usando esse arquivo.
+
+## Data de Entrega --> 22/06
