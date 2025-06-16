@@ -79,6 +79,9 @@ public class TelaPrincipal extends JFrame {
         textArea.setText(grafoAleatorio.gerarGrafo(5, true));
         aplicar();
 
+
+
+
     }
 
     private void criarMenu() {
@@ -299,6 +302,9 @@ public class TelaPrincipal extends JFrame {
         painelGrafo.desenharGrafo();
         painelGrafo.setVisible(true);
         painelGrafo.repaint();
+        LogManager.configurar(textLog, grafo);
+        LogManager.updateLog("Contem ciclos: " + grafo.contemCiclos());
+
     }
 
     private void gerarGrafoAleatorio() {
