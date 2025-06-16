@@ -1,20 +1,17 @@
 package visualizacao;
 
 import algoritmos.MarcarVertices;
-import estruturas.Aresta;
 import estruturas.Grafo;
-import estruturas.Vertice;
-import utils.LogManager;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.Scanner;
+import javax.swing.*;
+import utils.LogManager;
 
 public class TelaPrincipal extends JFrame {
 
@@ -81,10 +78,10 @@ public class TelaPrincipal extends JFrame {
         });
 
         JButton btnExportarDot = new JButton("Exportar DOT");
-        btnExportarDot.addActionListener(e -> grafo.exportarParaArquivoDot(grafo));
+        btnExportarDot.addActionListener(e -> exportarParaArquivoDot());
 
         JButton btnCopiarDot = new JButton("Copiar DOT");
-        btnCopiarDot.addActionListener(e -> grafo.exportarParaAreaTransferenciaDot());
+        btnCopiarDot.addActionListener(e -> exportarParaAreaTransferenciaDot());
 
         barraBotoes.add(btnCopiarDot);
         barraBotoes.add(btnExportarDot);
@@ -234,6 +231,40 @@ public class TelaPrincipal extends JFrame {
                 JOptionPane.showMessageDialog(this, "Arquivo salvo com sucesso!");
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(this, "Erro ao salvar arquivo: " + ex.getMessage());
+            }
+        }
+    }
+
+    private void exportarParaAreaTransferenciaDot() {
+        String dot = grafo.toDot();
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Transferable transferable = new StringSelection(dot);
+        clipboard.setContents(transferable, null);
+        JOptionPane.showMessageDialog(null, "Conteúdo DOT copiado para a área de transferência!");
+    }
+
+    private void exportarParaArquivoDot() {
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Arquivos DOT", "dot"));
+
+        int escolha = fileChooser.showSaveDialog(null);
+
+        if (escolha == JFileChooser.APPROVE_OPTION) {
+            File arquivo = fileChooser.getSelectedFile();
+
+            if (!arquivo.getName().toLowerCase().endsWith(".dot")) {
+                arquivo = new File(arquivo.getAbsolutePath() + ".dot");
+            }
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo))) {
+
+                writer.write(grafo.toDot());
+
+                JOptionPane.showMessageDialog(null, "Arquivo DOT exportado com sucesso!");
+
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(null, "Erro ao exportar arquivo DOT: " + ex.getMessage());
             }
         }
     }
