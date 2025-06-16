@@ -107,40 +107,83 @@ public class Grafo {
 
     public boolean contemCiclos() {
     Set<Vertice> visitados = new HashSet<>();
+    Map<Vertice, String> estado = new HashMap<>(); 
 
     for (Vertice v : this.getListaVertices()) {
-        if (!visitados.contains(v)) {
-            Stack<Vertice> pilha = new Stack<>();
-            Map<Vertice, Vertice> pai = new HashMap<>();
+        estado.put(v, "naoVisitado"); 
+    }
 
-            pilha.push(v);
-            pai.put(v, null);
+    for (Vertice v : this.getListaVertices()) {
+        if (this.direcionado) {
+            if (estado.get(v).equals("naoVisitado")) {
+                Stack<Vertice> pilha = new Stack<>();
+                Map<Vertice, String> estadoLocal = new HashMap<>(estado);
 
-            while (!pilha.isEmpty()) {
-                Vertice atual = pilha.pop();
-                visitados.add(atual);
+                pilha.push(v);
+                estadoLocal.put(v, "visitando");
 
-                List<Vertice> vizinhos = new ArrayList<>();
-                for (Aresta a : this.getListaArestas()) {
-                    if (a.getOrigem().equals(atual)) {
-                        vizinhos.add(a.getDestino());
-                    } else if (a.getDestino().equals(atual)) {
-                        vizinhos.add(a.getOrigem());
+                while (!pilha.isEmpty()) {
+                    Vertice atual = pilha.peek();
+                    boolean encontrouVizinho = false;
+
+                    for (Aresta a : this.getListaArestas()) {
+                        if (a.getOrigem().equals(atual)) {
+                            Vertice vizinho = a.getDestino();
+
+                            if (estadoLocal.get(vizinho).equals("visitando")) {
+                                return true; 
+                            }
+
+                            if (estadoLocal.get(vizinho).equals("naoVisitado")) {
+                                pilha.push(vizinho);
+                                estadoLocal.put(vizinho, "visitando");
+                                encontrouVizinho = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!encontrouVizinho) {
+                        estadoLocal.put(atual, "visitado");
+                        pilha.pop();
                     }
                 }
+            }
+        } else {
+            if (!visitados.contains(v)) {
+                Stack<Vertice> pilha = new Stack<>();
+                Map<Vertice, Vertice> pai = new HashMap<>();
 
-                for (Vertice vizinho : vizinhos) {
-                    if (!visitados.contains(vizinho)) {
-                        pilha.push(vizinho);
-                        pai.put(vizinho, atual);
-                    } else if (!vizinho.equals(pai.get(atual))) {
-                        return true;
+                pilha.push(v);
+                pai.put(v, null);
+
+                while (!pilha.isEmpty()) {
+                    Vertice atual = pilha.pop();
+                    visitados.add(atual);
+
+                    List<Vertice> vizinhos = new ArrayList<>();
+                    for (Aresta a : this.getListaArestas()) {
+                        if (a.getOrigem().equals(atual)) {
+                            vizinhos.add(a.getDestino());
+                        } else if (a.getDestino().equals(atual)) {
+                            vizinhos.add(a.getOrigem());
+                        }
+                    }
+
+                    for (Vertice vizinho : vizinhos) {
+                        if (!visitados.contains(vizinho)) {
+                            pilha.push(vizinho);
+                            pai.put(vizinho, atual);
+                        } else if (!vizinho.equals(pai.get(atual))) {
+                            return true; 
+                        }
                     }
                 }
             }
         }
     }
-    return false;
+
+    return false; 
 }
 
 }
