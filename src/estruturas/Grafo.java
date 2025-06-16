@@ -105,6 +105,26 @@ public class Grafo {
             }
         }
     }
+    public void mostrarGrausDosVertices() {
+        StringBuilder sb = new StringBuilder();
+
+        boolean direcionado = isDirecionado();
+        List<Aresta> arestas = getListaArestas();
+
+        for (Vertice v : getListaVertices()) {
+            if (direcionado) {
+                long grauEntrada = arestas.stream().filter(a -> a.getDestino().equals(v)).count();
+                long grauSaida = arestas.stream().filter(a -> a.getOrigem().equals(v)).count();
+
+                sb.append(String.format("%s grau entrada (%d) grau saida (%d)%n", v.getRotulo(), grauEntrada, grauSaida));
+            } else {
+                int grau = listaAdjacencia.getOrDefault(v, List.of()).size();
+                sb.append(String.format("%s grau (%d)%n", v.getRotulo(), grau));
+            }
+        }
+
+        utils.LogManager.updateLog(sb.toString());
+    }
     public boolean contemCiclos() {
         //IMPLEMENTAR
         //ISSUE

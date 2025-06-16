@@ -174,6 +174,12 @@ public class TelaPrincipal extends JFrame {
 
         JMenu menuAcao = new JMenu("Acao");
         JMenuItem menuItemGrau = new JMenuItem("Mostrar Grau dos Vertices");
+        menuItemGrau.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                grafo.mostrarGrausDosVertices();
+            }
+        });
         menuAcao.add(menuItemGrau);
 
         menuBar.add(menuArquivo);
