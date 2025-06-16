@@ -8,7 +8,7 @@ import utils.LogManager;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-import java.awt.Toolkit;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -16,9 +16,8 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.Scanner;
 
-
-
 public class TelaPrincipal extends JFrame {
+
     public final Grafo grafo;
     public String dadosGrafo;
     public PainelGrafo painelGrafo;
@@ -85,7 +84,7 @@ public class TelaPrincipal extends JFrame {
         btnExportarDot.addActionListener(e -> grafo.exportarParaArquivoDot(grafo));
 
         JButton btnCopiarDot = new JButton("Copiar DOT");
-        btnCopiarDot.addActionListener(e -> grafo.exportarParaAreaTransferenciaDot(grafo));
+        btnCopiarDot.addActionListener(e -> grafo.exportarParaAreaTransferenciaDot());
 
         barraBotoes.add(btnCopiarDot);
         barraBotoes.add(btnExportarDot);
@@ -93,17 +92,17 @@ public class TelaPrincipal extends JFrame {
         barraBotoes.add(botaoSalvar);
 
         btnAplicar.addActionListener(new ActionListener() {
-                                         @Override
-                                         public void actionPerformed(ActionEvent e) {
-                                             System.out.println("Clicou no Aplicar da Tela Principal");
-                                             dadosGrafo = textArea.getText();
-                                             painelGrafo.limpar();
-                                             grafo.atualizarGrafo(dadosGrafo);
-                                             painelGrafo.desenharGrafo();
-                                             painelGrafo.setVisible(true);
-                                             painelGrafo.repaint();
-                                         }
-                                     }
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Clicou no Aplicar da Tela Principal");
+                dadosGrafo = textArea.getText();
+                painelGrafo.limpar();
+                grafo.atualizarGrafo(dadosGrafo);
+                painelGrafo.desenharGrafo();
+                painelGrafo.setVisible(true);
+                painelGrafo.repaint();
+            }
+        }
         );
 
         JButton btnMarcar = new JButton("Marcar Vertices");
@@ -183,7 +182,6 @@ public class TelaPrincipal extends JFrame {
         menuArquivo.add(menuItemSalvar);
         menuArquivo.add(menuItemSair);
 
-
         JMenu menuAcao = new JMenu("Acao");
         JMenuItem menuItemGrau = new JMenuItem("Mostrar Grau dos Vertices");
         menuAcao.add(menuItemGrau);
@@ -201,6 +199,7 @@ public class TelaPrincipal extends JFrame {
     private void criarBotoes() {
 
     }
+
     private void abrirArquivo() {
         JFileChooser fileChooser = new JFileChooser();
         int escolha = fileChooser.showOpenDialog(this);
@@ -223,6 +222,7 @@ public class TelaPrincipal extends JFrame {
             }
         }
     }
+
     private void salvarArquivo() {
         JFileChooser fileChooser = new JFileChooser();
         int escolha = fileChooser.showSaveDialog(this);
@@ -237,8 +237,5 @@ public class TelaPrincipal extends JFrame {
             }
         }
     }
-
-
-
 
 }
