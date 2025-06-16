@@ -34,6 +34,7 @@ public class TelaPrincipal extends JFrame {
     private JTextArea textLog;
     public JTextArea textArea;
     private JMenuBar menuBar;
+    private JScrollPane scrollPane;
 
     private BuscaProfundidade dfs;
 
