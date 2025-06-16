@@ -310,10 +310,6 @@ public class TelaPrincipal extends JFrame {
 
     }
 
-    private void criarBotoes() {
-
-    }
-
 
     private void abrirArquivo() {
         JFileChooser fileChooser = new JFileChooser();
