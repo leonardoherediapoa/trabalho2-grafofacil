@@ -46,7 +46,7 @@ public class Grafo {
         return resultado;
     }
     public Vertice getVertice(String rotulo) {
-       Set<Vertice> vertices = listaAdjacencia.keySet();
+        Set<Vertice> vertices = listaAdjacencia.keySet();
         for (Vertice v:vertices) if(v.getRotulo().equals(rotulo)) return v;
         return null;
     }
@@ -106,10 +106,43 @@ public class Grafo {
     }
 
     public boolean contemCiclos() {
-        //IMPLEMENTAR
-        //ISSUE
-        return false;
+    Set<Vertice> visitados = new HashSet<>();
+
+    for (Vertice v : this.getListaVertices()) {
+        if (!visitados.contains(v)) {
+            Stack<Vertice> pilha = new Stack<>();
+            Map<Vertice, Vertice> pai = new HashMap<>();
+
+            pilha.push(v);
+            pai.put(v, null);
+
+            while (!pilha.isEmpty()) {
+                Vertice atual = pilha.pop();
+                visitados.add(atual);
+
+                List<Vertice> vizinhos = new ArrayList<>();
+                for (Aresta a : this.getListaArestas()) {
+                    if (a.getOrigem().equals(atual)) {
+                        vizinhos.add(a.getDestino());
+                    } else if (a.getDestino().equals(atual)) {
+                        vizinhos.add(a.getOrigem());
+                    }
+                }
+
+                for (Vertice vizinho : vizinhos) {
+                    if (!visitados.contains(vizinho)) {
+                        pilha.push(vizinho);
+                        pai.put(vizinho, atual);
+                    } else if (!vizinho.equals(pai.get(atual))) {
+                        return true;
+                    }
+                }
+            }
+        }
     }
+    return false;
+}
+
 
     public Map<Vertice, List<Aresta>> getListaAdjacencia() {
         return listaAdjacencia;
