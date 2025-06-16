@@ -95,6 +95,80 @@ if (linha.contains("->") || linha.contains("--")) {
 }
 ```
 
+### 5. Implementação na Classe `TelaPrincipal`
+
+#### Método `salvarArquivo()`
+
+O método `salvarArquivo()` na classe `TelaPrincipal` foi modificado para armazenar as coordenadas dos vértices:
+
+```java
+private void salvarArquivo() {
+    JFileChooser fileChooser = new JFileChooser();
+    int escolha = fileChooser.showSaveDialog(this);
+    if (escolha == JFileChooser.APPROVE_OPTION) {
+        File arquivo = fileChooser.getSelectedFile();
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(arquivo))) {
+            // Salva vértices com coordenadas
+            for (Vertice v : grafo.getListaVertices()) {
+                writer.write(v.getRotulo() + " " + v.getX() + " " + v.getY());
+                writer.newLine();
+            }
+            // Salva arestas
+            for (Aresta a : grafo.getListaArestas()) {
+                String sep = a.isDirecionada() ? "->" : "--";
+                writer.write(a.getOrigem().getRotulo() + " " + sep + " " + a.getDestino().getRotulo() + " "
+                        + a.getPeso());
+                writer.newLine();
+            }
+            JOptionPane.showMessageDialog(this, "Arquivo salvo com sucesso!");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Erro ao salvar arquivo: " + ex.getMessage());
+        }
+    }
+}
+```
+
+#### Método `abrirArquivo()`
+
+O método `abrirArquivo()` também foi adaptado para processar corretamente os arquivos que contêm informações de posicionamento dos vértices. Quando um arquivo é aberto, as coordenadas são lidas e os vértices são posicionados exatamente como estavam quando o arquivo foi salvo:
+
+```java
+private void abrirArquivo() {
+    JFileChooser fileChooser = new JFileChooser();
+    int escolha = fileChooser.showOpenDialog(this);
+    if (escolha == JFileChooser.APPROVE_OPTION) {
+        File arquivo = fileChooser.getSelectedFile();
+        try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
+            grafo.limparGrafo();
+            String linha;
+            while ((linha = reader.readLine()) != null) {
+                if (linha.contains("->") || linha.contains("--")) {
+                    // Tratar como aresta
+                    String[] partes = linha.split("\\s+");
+                    String origem = partes[0];
+                    String destino = partes[2];
+                    int peso = Integer.parseInt(partes[3]);
+                    boolean direcionada = linha.contains("->");
+                    grafo.adicionarAresta(origem, destino, peso, direcionada);
+                } else {
+                    // Tratar como vértice com coordenadas
+                    String[] partes = linha.split("\\s+");
+                    String rotulo = partes[0];
+                    int x = Integer.parseInt(partes[1]);
+                    int y = Integer.parseInt(partes[2]);
+                    grafo.adicionarVertice(new Vertice(rotulo, x, y));
+                }
+            }
+            JOptionPane.showMessageDialog(this, "Arquivo aberto com sucesso!");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Erro ao abrir arquivo: " + ex.getMessage());
+        }
+    }
+}
+```
+
+Essas alterações garantem que os vértices e arestas sejam corretamente salvos e restaurados, mantendo a persistência das posições no diagrama.
+
 ---
 
 ## Como Usar
