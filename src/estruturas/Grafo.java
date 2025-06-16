@@ -122,7 +122,6 @@ public class Grafo {
                 sb.append(String.format("%s grau (%d)%n", v.getRotulo(), grau));
             }
         }
-
         utils.LogManager.updateLog(sb.toString());
     }
     public boolean contemCiclos() {
