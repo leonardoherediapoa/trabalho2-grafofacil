@@ -106,8 +106,33 @@ public class Grafo {
         }
     }
     public boolean contemCiclos() {
-        //IMPLEMENTAR
-        //ISSUE
+        int n = getNumeroVertices();
+
+        boolean[] visitados = new boolean[n];
+
+        if (direcionado) {
+            for (int i = 0; i < n; i++) {
+                if (!visitados[i] && contemCiclosDir()) { //ainda nao visitou? verifica
+                    return true;
+                }
+            }
+        } else {
+            for (int i = 0; i < n; i++) {
+                if (!visitados[i] && contemCiclosNaoDir()) { //idem
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean contemCiclosDir() {
+
+        return false;
+    }
+
+    private boolean contemCiclosNaoDir() {
+
         return false;
     }
 }
