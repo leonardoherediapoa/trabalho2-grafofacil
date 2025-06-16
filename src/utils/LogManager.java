@@ -2,6 +2,9 @@ package utils;
 
 import javax.swing.JTextArea;
 import estruturas.Grafo;
+import estruturas.Vertice;
+import estruturas.Aresta;
+import mostrarGrauVertices.MostrarGrausVertices;
 
 public class LogManager {
     private static JTextArea textLog;
@@ -31,4 +34,11 @@ public class LogManager {
     public static void updateLog() {
         updateLog(null);
     }
-}
+
+    public static void mostrarGrausVertices() {
+        if (textLog == null || grafo == null) return;
+        String mensagem = MostrarGrausVertices.calcularGrausVertices(grafo);
+        updateLog(mensagem);
+    }
+
+    }
