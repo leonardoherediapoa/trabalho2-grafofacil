@@ -1,7 +1,7 @@
 package visualizacao;
 
 import algoritmos.MarcarVertices;
-import algoritmos.Dijkstra;
+import algoritmos.busca_largura.Dijkstra.Dijkstra;
 import estruturas.Aresta;
 import estruturas.Grafo;
 import estruturas.Vertice;
@@ -127,7 +127,6 @@ public class TelaPrincipal extends JFrame {
         btnDijkstra.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 String rotOrigem = JOptionPane.showInputDialog(
                         TelaPrincipal.this,
                         "Rótulo do vértice de ORIGEM:",

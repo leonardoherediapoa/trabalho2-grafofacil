@@ -1,4 +1,4 @@
-package algoritmos;
+package algoritmos.busca_largura.Dijkstra;
 
 import java.util.*;
 import estruturas.*;
