@@ -13,6 +13,12 @@ import java.util.*;
 public class Mst {
 
     public static void executarPrim(Grafo grafo, Vertice origem) {
+        // Verifica se o grafo possui ciclos
+        if(grafo.contemCiclos()){ 
+            System.out.println("Grafo possui ciclos.");
+        }else{
+            System.out.println("Grafo sem ciclos.");
+        }
         Map<Vertice, Integer> chave = new HashMap<>(); //Guarda a Aresta com menor peso
         Map<Vertice, Vertice> pai = new HashMap<>(); //Guarda o vertice pai
         Set<Vertice> naMST = new HashSet<>(); //Guarda os vertices da MST
