@@ -12,3 +12,4 @@
 * no painel de log da aplicação, para que o utilizador possa ver facilmente os graus.
 * Aluna: Salette C. da Costa 
 
+    
