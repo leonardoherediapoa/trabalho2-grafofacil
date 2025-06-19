@@ -4,6 +4,7 @@ import algoritmos.MarcarVertices;
 import algoritmos.BuscaProfundidade;
 import algoritmos.busca_largura.Dijkstra.Dijkstra;
 import estruturas.Aresta;
+import estruturas.BuscaLargura;
 import estruturas.Grafo;
 import estruturas.Vertice;
 import utils.LogManager;
@@ -238,6 +239,39 @@ public class TelaPrincipal extends JFrame {
 
         JButton btnLargura = new JButton("Largura");
         barraBotoes.add(btnLargura);
+        btnLargura.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String origem = JOptionPane.showInputDialog("Informe o vértice de origem para BFS:");
+            if (origem != null && !origem.trim().isEmpty()) {
+                Vertice verticeOrigem = grafo.getVertice(origem.trim());
+                if (verticeOrigem != null) {
+                    try {
+                        BuscaLargura bfs = new BuscaLargura();
+                        List<Vertice> visitados = bfs.buscar(grafo, verticeOrigem);
+                        StringBuilder log = new StringBuilder("Ordem de visita (BFS): ");
+                        for (Vertice v : visitados) {
+                            log.append(v.getRotulo()).append(" ");
+                        }
+                        LogManager.updateLog(log.toString());
+                        for (Vertice v : grafo.getListaVertices()) {
+                            painelGrafo.setCorVertice(v, Color.YELLOW);
+                        }
+                        painelGrafo.repaint();
+
+                        painelGrafo.desenharVertices(visitados, Color.RED, 1000);
+
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(TelaPrincipal.this,
+                                "Erro ao executar BFS: " + ex.getMessage());
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(TelaPrincipal.this,
+                            "Vértice '" + origem + "' não encontrado no grafo!");
+                }
+            }
+        }
+    });
 
         JButton btnMST = new JButton("MST");
         barraBotoes.add(btnMST);
