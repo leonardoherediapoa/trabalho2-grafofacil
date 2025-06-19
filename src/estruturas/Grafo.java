@@ -46,7 +46,7 @@ public class Grafo {
         return resultado;
     }
     public Vertice getVertice(String rotulo) {
-       Set<Vertice> vertices = listaAdjacencia.keySet();
+        Set<Vertice> vertices = listaAdjacencia.keySet();
         for (Vertice v:vertices) if(v.getRotulo().equals(rotulo)) return v;
         return null;
     }
@@ -185,5 +185,10 @@ public class Grafo {
 
     return false; 
 }
+
+
+    public Map<Vertice, List<Aresta>> getListaAdjacencia() {
+        return listaAdjacencia;
+    }
 
 }

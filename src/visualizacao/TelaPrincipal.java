@@ -2,6 +2,7 @@ package visualizacao;
 
 import algoritmos.MarcarVertices;
 import algoritmos.BuscaProfundidade;
+import algoritmos.busca_largura.Dijkstra.Dijkstra;
 import estruturas.Aresta;
 import estruturas.Grafo;
 import estruturas.Vertice;
@@ -36,7 +37,8 @@ public class TelaPrincipal extends JFrame {
     private BuscaProfundidade dfs;
 
     public TelaPrincipal() {
-        //dadosGrafo = "A" + System.lineSeparator() + "B" + System.lineSeparator() + "C";
+        // dadosGrafo = "A" + System.lineSeparator() + "B" + System.lineSeparator() +
+        // "C";
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 800);
         setLocationRelativeTo(null);
@@ -158,12 +160,17 @@ public class TelaPrincipal extends JFrame {
         barraBotoes.add(botaoSalvar);
 
         btnAplicar.addActionListener(new ActionListener() {
-                                         @Override
-                                         public void actionPerformed(ActionEvent e) {
-                                             aplicar();
-                                         }
-                                     }
-        );
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Clicou no Aplicar da Tela Principal");
+                dadosGrafo = textArea.getText();
+                painelGrafo.limpar();
+                grafo.atualizarGrafo(dadosGrafo);
+                painelGrafo.desenharGrafo();
+                painelGrafo.setVisible(true);
+                painelGrafo.repaint();
+            }
+        });
 
         JButton btnMarcar = new JButton("Marcar Vertices");
         btnMarcar.addActionListener(new ActionListener() {
@@ -238,6 +245,76 @@ public class TelaPrincipal extends JFrame {
         JButton btnDijkstra = new JButton("Dijkstra");
         barraBotoes.add(btnDijkstra);
 
+        btnDijkstra.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String rotOrigem = JOptionPane.showInputDialog(
+                        TelaPrincipal.this,
+                        "Rótulo do vértice de ORIGEM:",
+                        "Dijkstra – Escolha a origem",
+                        JOptionPane.QUESTION_MESSAGE);
+
+                if (rotOrigem == null || rotOrigem.trim().isEmpty())
+                    return;
+                Vertice vOrigem = grafo.getVertice(rotOrigem.trim());
+                if (vOrigem == null) {
+                    JOptionPane.showMessageDialog(TelaPrincipal.this,
+                            "Vértice \"" + rotOrigem + "\" não existe.");
+                    return;
+                }
+
+                String rotDestino = JOptionPane.showInputDialog(
+                        TelaPrincipal.this,
+                        "Rótulo do vértice DESTINO (deixe em branco para ver todos):",
+                        "Dijkstra – Destino",
+                        JOptionPane.QUESTION_MESSAGE);
+
+                // Executa o algoritmo
+                Dijkstra d = new Dijkstra(grafo, vOrigem);
+
+                if (rotDestino != null && !rotDestino.trim().isEmpty()) {
+                    Vertice vDestino = grafo.getVertice(rotDestino.trim());
+                    if (vDestino == null) {
+                        JOptionPane.showMessageDialog(TelaPrincipal.this,
+                                "Vértice \"" + rotDestino + "\" não existe.");
+                        return;
+                    }
+
+                    java.util.List<Vertice> caminho = d.getCaminho(vDestino);
+                    if (caminho.isEmpty()) {
+                        JOptionPane.showMessageDialog(TelaPrincipal.this,
+                                "Não há caminho de " + rotOrigem + " até " + rotDestino + ".");
+                        return;
+                    }
+
+                    // texto no log
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("Caminho mínimo ").append(rotOrigem).append(" → ")
+                            .append(rotDestino).append(" (custo ")
+                            .append(d.getDistancia(vDestino)).append("): ");
+                    for (Vertice v : caminho)
+                        sb.append(v.getRotulo()).append(" ");
+                    sb.append('\n');
+                    textLog.append(sb.toString());
+
+                    painelGrafo.desenharVertices(caminho, Color.ORANGE, 400);
+                }
+
+                else {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("Dijkstra a partir de ").append(rotOrigem).append(":\n");
+                    for (Vertice v : grafo.getListaVertices()) {
+                        int dMin = d.getDistancia(v);
+                        sb.append("  ").append(v.getRotulo()).append(" = ");
+                        sb.append(dMin == Integer.MAX_VALUE ? "∞" : dMin).append('\n');
+                    }
+                    textLog.append(sb.toString());
+                }
+
+                textLog.setCaretPosition(textLog.getDocument().getLength());
+            }
+        });
+
         JButton btnFord = new JButton("Bellman-Ford");
         barraBotoes.add(btnFord);
 
@@ -253,7 +330,46 @@ public class TelaPrincipal extends JFrame {
         add(barraBotoes, BorderLayout.NORTH);
         add(painelDireito, BorderLayout.CENTER);
         add(painelDados, BorderLayout.WEST);
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menuArquivo = new JMenu("Arquivo");
+
+        JMenuItem menuItemAbrir = new JMenuItem("Abrir");
+        menuItemAbrir.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                abrirArquivo();
+                System.out.println(textArea.getText());
+                SwingUtilities.invokeLater(() -> {
+                    painelEsquerdo.invalidate();
+                    painelEsquerdo.revalidate();
+                    painelEsquerdo.repaint();
+                });
+            }
+        });
+
+        JMenuItem menuItemSalvar = new JMenuItem("Salvar");
+        menuItemSalvar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                salvarArquivo();
+            }
+        });
+
+        JMenuItem menuItemSair = new JMenuItem("Sair");
+        menuItemSair.addActionListener(e -> System.exit(0));
+        menuArquivo.add(menuItemAbrir);
+        menuArquivo.add(menuItemSalvar);
+        menuArquivo.add(menuItemSair);
+        menuBar.add(menuArquivo);
+        setJMenuBar(menuBar);
+        setVisible(true);
+
+        LogManager.configurar(textLog, grafo);
+        LogManager.updateLog("conteudo adicional");
+
     }
+
     private void abrirArquivo() {
         JFileChooser fileChooser = new JFileChooser();
         int escolha = fileChooser.showOpenDialog(this);
@@ -276,6 +392,7 @@ public class TelaPrincipal extends JFrame {
             }
         }
     }
+
     private void salvarArquivo() {
         JFileChooser fileChooser = new JFileChooser();
         int escolha = fileChooser.showSaveDialog(this);
@@ -345,5 +462,6 @@ public class TelaPrincipal extends JFrame {
 
 
     }
+
 
 }
