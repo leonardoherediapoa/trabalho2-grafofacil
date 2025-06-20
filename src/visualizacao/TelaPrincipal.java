@@ -60,7 +60,6 @@ public class TelaPrincipal extends JFrame {
         painelGrafo = new PainelGrafo(grafo);
         painelGrafo.setBackground(Color.WHITE);
         painelGrafo.setVisible(true);
-
         painelLog = new JPanel(new BorderLayout());
         painelLog.setPreferredSize(new Dimension(800, 100));
         textLog = new JTextArea();
@@ -81,6 +80,8 @@ public class TelaPrincipal extends JFrame {
         GeradorGrafoAleatorio grafoAleatorio = new GeradorGrafoAleatorio();
         textArea.setText(grafoAleatorio.gerarGrafo(5, true));
         aplicar();
+                LogManager.configurar(textLog, grafo);
+
 
 
 
@@ -125,6 +126,7 @@ public class TelaPrincipal extends JFrame {
 
         JMenu menuAcao = new JMenu("Acao");
         JMenuItem menuItemGrau = new JMenuItem("Mostrar Grau dos Vertices");
+        menuItemGrau.addActionListener(e -> LogManager.mostrarGrausVertices());
         JMenuItem menuGrafoRandomico = new JMenuItem("Gerar Grafo");
         menuGrafoRandomico.addActionListener(e-> gerarGrafoAleatorio());
         menuAcao.add(menuItemGrau);
