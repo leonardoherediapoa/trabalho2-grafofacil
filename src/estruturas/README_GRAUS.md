@@ -1,6 +1,3 @@
-
-* Método serve para mostrar quantas ligações (arestas) cada vértice do grafo tem.
-
 * Se o grafo for não direcionado, ele conta simplesmente quantas arestas estão ligadas
 * a cada vértice, ou seja, o grau total de cada um.
 
