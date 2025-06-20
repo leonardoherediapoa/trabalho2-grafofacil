@@ -124,6 +124,7 @@ public class TelaPrincipal extends JFrame {
         JMenuItem menuItemGrau = new JMenuItem("Mostrar Grau dos Vertices");
         JMenuItem menuGrafoRandomico = new JMenuItem("Gerar Grafo");
         menuGrafoRandomico.addActionListener(e-> gerarGrafoAleatorio());
+        menuItemGrau.addActionListener(e -> grafo.mostrarGrausDosVertices());
         menuAcao.add(menuItemGrau);
         menuAcao.add(menuGrafoRandomico);
 
@@ -131,7 +132,6 @@ public class TelaPrincipal extends JFrame {
         menuBar.add(menuAcao);
         setJMenuBar(menuBar);
         setVisible(true);
-
 
     }
     private void criarBotoes() {

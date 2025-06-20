@@ -121,7 +121,7 @@ public class Grafo {
                 int grau = listaAdjacencia.getOrDefault(v, List.of()).size();
                 sb.append(String.format("%s grau (%d)%n", v.getRotulo(), grau));
             }
-        }
+    }
         utils.LogManager.updateLog(sb.toString());
     }
     public boolean contemCiclos() {
