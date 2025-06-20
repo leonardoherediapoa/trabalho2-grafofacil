@@ -13,9 +13,22 @@ import java.util.*;
 public class Mst {
 
     public static void executarPrim(Grafo grafo, Vertice origem) {
+        //evitar nullPointerException
+        if (grafo == null || origem == null) {
+            System.out.println("Grafo ou vertice de origem nulo.");
+            return;
+        }
+
+        //verifica se pertence ao grafo e foi adicionado certo
+        if (!grafo.getListaVertices().contains(origem)) {
+            System.out.println("O vértice de origem não pertence ao grafo.");
+            return;
+        }
+
+
         // Verifica se o grafo possui ciclos
         if(grafo.contemCiclos()){ 
-            System.out.println("Grafo possui ciclos.");
+            System.out.println("Grafo contém ciclos. O algoritmo de Prim ignora ciclos para formar a MST.");
         }else{
             System.out.println("Grafo sem ciclos.");
         }
@@ -53,6 +66,7 @@ public class Mst {
         }
 
         // Imprime o resultado da Árvore Geradora Mínima
+        System.out.println("\nÁrvore Geradora Mínima (MST) - Algoritmo de Prim");
         System.out.println("Aresta \tPeso");
         for (Vertice v : grafo.getListaVertices()) {// Para cada vertice
             Vertice paiVertice = pai.get(v); // Obtem o vertice pai
