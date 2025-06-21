@@ -191,4 +191,10 @@ public class Grafo {
         return listaAdjacencia;
     }
 
+    public void ordenacaoTopologica(){ //TODO: definir retorno
+        if(contemCiclos()){
+            return;
+        }
+    }
+
 }
