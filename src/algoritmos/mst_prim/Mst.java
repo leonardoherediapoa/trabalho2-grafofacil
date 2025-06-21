@@ -14,9 +14,9 @@ public class Mst {
 
     public static void executarPrim(Grafo grafo, Vertice origem) {
         // Verifica se o grafo possui ciclos
-        if(grafo.contemCiclos()){ 
+        if (grafo.contemCiclos()) {
             System.out.println("Grafo possui ciclos.");
-        }else{
+        } else {
             System.out.println("Grafo sem ciclos.");
         }
         Map<Vertice, Integer> chave = new HashMap<>(); //Guarda a Aresta com menor peso
@@ -31,7 +31,7 @@ public class Mst {
 
         chave.put(origem, 0); // Aresta de origem para origem tem peso 0
 
-        
+
         PriorityQueue<Vertice> fila = new PriorityQueue<>(Comparator.comparingInt(chave::get)); //Fila de prioridade baseada nas chaves
         fila.addAll(grafo.getListaVertices()); //Adiciona todos os vertices na fila
 
@@ -66,7 +66,7 @@ public class Mst {
                 }
                 System.out.println(paiVertice.getRotulo() + " - " + v.getRotulo() + "\t" + peso);
             }
-        }
-    }
+        }
+    }
 }
 

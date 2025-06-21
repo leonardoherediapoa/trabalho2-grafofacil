@@ -125,8 +125,12 @@ public class TelaPrincipal extends JFrame {
 
         JMenu menuAcao = new JMenu("Acao");
         JMenuItem menuItemGrau = new JMenuItem("Mostrar Grau dos Vertices");
+        menuItemGrau.addActionListener(e -> {
+            grafo.mostrarGrausDosVertices();
+        });
         JMenuItem menuGrafoRandomico = new JMenuItem("Gerar Grafo");
-        menuGrafoRandomico.addActionListener(e-> gerarGrafoAleatorio());
+        menuGrafoRandomico.addActionListener(e -> gerarGrafoAleatorio());
+
         menuAcao.add(menuItemGrau);
         menuAcao.add(menuGrafoRandomico);
 
@@ -134,8 +138,6 @@ public class TelaPrincipal extends JFrame {
         menuBar.add(menuAcao);
         setJMenuBar(menuBar);
         setVisible(true);
-
-
     }
     private void criarBotoes() {
         barraBotoes = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -240,38 +242,38 @@ public class TelaPrincipal extends JFrame {
         JButton btnLargura = new JButton("Largura");
         barraBotoes.add(btnLargura);
         btnLargura.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            String origem = JOptionPane.showInputDialog("Informe o vértice de origem para BFS:");
-            if (origem != null && !origem.trim().isEmpty()) {
-                Vertice verticeOrigem = grafo.getVertice(origem.trim());
-                if (verticeOrigem != null) {
-                    try {
-                        BuscaLargura bfs = new BuscaLargura();
-                        List<Vertice> visitados = bfs.buscar(grafo, verticeOrigem);
-                        StringBuilder log = new StringBuilder("Ordem de visita (BFS): ");
-                        for (Vertice v : visitados) {
-                            log.append(v.getRotulo()).append(" ");
-                        }
-                        LogManager.updateLog(log.toString());
-                        for (Vertice v : grafo.getListaVertices()) {
-                            painelGrafo.setCorVertice(v, Color.YELLOW);
-                        }
-                        painelGrafo.repaint();
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String origem = JOptionPane.showInputDialog("Informe o vértice de origem para BFS:");
+                if (origem != null && !origem.trim().isEmpty()) {
+                    Vertice verticeOrigem = grafo.getVertice(origem.trim());
+                    if (verticeOrigem != null) {
+                        try {
+                            BuscaLargura bfs = new BuscaLargura();
+                            List<Vertice> visitados = bfs.buscar(grafo, verticeOrigem);
+                            StringBuilder log = new StringBuilder("Ordem de visita (BFS): ");
+                            for (Vertice v : visitados) {
+                                log.append(v.getRotulo()).append(" ");
+                            }
+                            LogManager.updateLog(log.toString());
+                            for (Vertice v : grafo.getListaVertices()) {
+                                painelGrafo.setCorVertice(v, Color.YELLOW);
+                            }
+                            painelGrafo.repaint();
 
-                        painelGrafo.desenharVertices(visitados, Color.RED, 1000);
+                            painelGrafo.desenharVertices(visitados, Color.RED, 1000);
 
-                    } catch (Exception ex) {
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(TelaPrincipal.this,
+                                    "Erro ao executar BFS: " + ex.getMessage());
+                        }
+                    } else {
                         JOptionPane.showMessageDialog(TelaPrincipal.this,
-                                "Erro ao executar BFS: " + ex.getMessage());
+                                "Vértice '" + origem + "' não encontrado no grafo!");
                     }
-                } else {
-                    JOptionPane.showMessageDialog(TelaPrincipal.this,
-                            "Vértice '" + origem + "' não encontrado no grafo!");
                 }
             }
-        }
-    });
+        });
 
         JButton btnMST = new JButton("MST");
         barraBotoes.add(btnMST);
@@ -496,6 +498,5 @@ public class TelaPrincipal extends JFrame {
 
 
     }
-
 
 }
