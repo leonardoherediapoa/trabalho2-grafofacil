@@ -1,7 +1,6 @@
 package estruturas;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class Grafo {
     private LinkedHashMap<Vertice, List<Aresta>> listaAdjacencia;
@@ -47,13 +46,12 @@ public class Grafo {
         return resultado;
     }
     public Vertice getVertice(String rotulo) {
-       Set<Vertice> vertices = listaAdjacencia.keySet();
+        Set<Vertice> vertices = listaAdjacencia.keySet();
         for (Vertice v:vertices) if(v.getRotulo().equals(rotulo)) return v;
         return null;
     }
     public List<Vertice> getListaVertices() {
         return new ArrayList<>(listaAdjacencia.keySet());
-
     }
     public List<Aresta> getListaArestas() {
         List<Aresta> lista = new ArrayList<>();
@@ -72,6 +70,7 @@ public class Grafo {
     public void limpar() {
         listaAdjacencia = new LinkedHashMap<>();
     }
+
     public void atualizarGrafo(String dadosGrafo) {
         this.limpar();
         System.out.println("Atualizar Grafo");
@@ -105,6 +104,88 @@ public class Grafo {
             }
         }
     }
+
+    public boolean contemCiclos() {
+        Set<Vertice> visitados = new HashSet<>();
+        Map<Vertice, String> estado = new HashMap<>();
+
+        for (Vertice v : this.getListaVertices()) {
+            estado.put(v, "naoVisitado");
+        }
+
+        for (Vertice v : this.getListaVertices()) {
+            if (this.direcionado) {
+                if (estado.get(v).equals("naoVisitado")) {
+                    Stack<Vertice> pilha = new Stack<>();
+                    Map<Vertice, String> estadoLocal = new HashMap<>(estado);
+
+                    pilha.push(v);
+                    estadoLocal.put(v, "visitando");
+
+                    while (!pilha.isEmpty()) {
+                        Vertice atual = pilha.peek();
+                        boolean encontrouVizinho = false;
+
+                        for (Aresta a : this.getListaArestas()) {
+                            if (a.getOrigem().equals(atual)) {
+                                Vertice vizinho = a.getDestino();
+
+                                if (estadoLocal.get(vizinho).equals("visitando")) {
+                                    return true;
+                                }
+
+                                if (estadoLocal.get(vizinho).equals("naoVisitado")) {
+                                    pilha.push(vizinho);
+                                    estadoLocal.put(vizinho, "visitando");
+                                    encontrouVizinho = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (!encontrouVizinho) {
+                            estadoLocal.put(atual, "visitado");
+                            pilha.pop();
+                        }
+                    }
+                }
+            } else {
+                if (!visitados.contains(v)) {
+                    Stack<Vertice> pilha = new Stack<>();
+                    Map<Vertice, Vertice> pai = new HashMap<>();
+
+                    pilha.push(v);
+                    pai.put(v, null);
+
+                    while (!pilha.isEmpty()) {
+                        Vertice atual = pilha.pop();
+                        visitados.add(atual);
+
+                        List<Vertice> vizinhos = new ArrayList<>();
+                        for (Aresta a : this.getListaArestas()) {
+                            if (a.getOrigem().equals(atual)) {
+                                vizinhos.add(a.getDestino());
+                            } else if (a.getDestino().equals(atual)) {
+                                vizinhos.add(a.getOrigem());
+                            }
+                        }
+
+                        for (Vertice vizinho : vizinhos) {
+                            if (!visitados.contains(vizinho)) {
+                                pilha.push(vizinho);
+                                pai.put(vizinho, atual);
+                            } else if (!vizinho.equals(pai.get(atual))) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
     public void mostrarGrausDosVertices() {
         StringBuilder sb = new StringBuilder();
 
@@ -115,18 +196,17 @@ public class Grafo {
             if (direcionado) {
                 long grauEntrada = arestas.stream().filter(a -> a.getDestino().equals(v)).count();
                 long grauSaida = arestas.stream().filter(a -> a.getOrigem().equals(v)).count();
-
                 sb.append(String.format("%s grau entrada (%d) grau saida (%d)%n", v.getRotulo(), grauEntrada, grauSaida));
             } else {
                 int grau = listaAdjacencia.getOrDefault(v, List.of()).size();
                 sb.append(String.format("%s grau (%d)%n", v.getRotulo(), grau));
             }
-    }
+        }
+
         utils.LogManager.updateLog(sb.toString());
     }
-    public boolean contemCiclos() {
-        //IMPLEMENTAR
-        //ISSUE
-        return false;
+
+    public Map<Vertice, List<Aresta>> getListaAdjacencia() {
+        return listaAdjacencia;
     }
 }
