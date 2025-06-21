@@ -1,7 +1,6 @@
 package estruturas;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class Grafo {
     private LinkedHashMap<Vertice, List<Aresta>> listaAdjacencia;
@@ -47,7 +46,7 @@ public class Grafo {
         return resultado;
     }
     public Vertice getVertice(String rotulo) {
-       Set<Vertice> vertices = listaAdjacencia.keySet();
+        Set<Vertice> vertices = listaAdjacencia.keySet();
         for (Vertice v:vertices) if(v.getRotulo().equals(rotulo)) return v;
         return null;
     }
@@ -105,34 +104,91 @@ public class Grafo {
             }
         }
     }
+
     public boolean contemCiclos() {
-        int n = getNumeroVertices();
+    Set<Vertice> visitados = new HashSet<>();
+    Map<Vertice, String> estado = new HashMap<>(); 
 
-        boolean[] visitados = new boolean[n];
+    for (Vertice v : this.getListaVertices()) {
+        estado.put(v, "naoVisitado"); 
+    }
 
-        if (direcionado) {
-            for (int i = 0; i < n; i++) {
-                if (!visitados[i] && contemCiclosDir()) { //ainda nao visitou? verifica
-                    return true;
+    for (Vertice v : this.getListaVertices()) {
+        if (this.direcionado) {
+            if (estado.get(v).equals("naoVisitado")) {
+                Stack<Vertice> pilha = new Stack<>();
+                Map<Vertice, String> estadoLocal = new HashMap<>(estado);
+
+                pilha.push(v);
+                estadoLocal.put(v, "visitando");
+
+                while (!pilha.isEmpty()) {
+                    Vertice atual = pilha.peek();
+                    boolean encontrouVizinho = false;
+
+                    for (Aresta a : this.getListaArestas()) {
+                        if (a.getOrigem().equals(atual)) {
+                            Vertice vizinho = a.getDestino();
+
+                            if (estadoLocal.get(vizinho).equals("visitando")) {
+                                return true; 
+                            }
+
+                            if (estadoLocal.get(vizinho).equals("naoVisitado")) {
+                                pilha.push(vizinho);
+                                estadoLocal.put(vizinho, "visitando");
+                                encontrouVizinho = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!encontrouVizinho) {
+                        estadoLocal.put(atual, "visitado");
+                        pilha.pop();
+                    }
                 }
             }
         } else {
-            for (int i = 0; i < n; i++) {
-                if (!visitados[i] && contemCiclosNaoDir()) { //idem
-                    return true;
+            if (!visitados.contains(v)) {
+                Stack<Vertice> pilha = new Stack<>();
+                Map<Vertice, Vertice> pai = new HashMap<>();
+
+                pilha.push(v);
+                pai.put(v, null);
+
+                while (!pilha.isEmpty()) {
+                    Vertice atual = pilha.pop();
+                    visitados.add(atual);
+
+                    List<Vertice> vizinhos = new ArrayList<>();
+                    for (Aresta a : this.getListaArestas()) {
+                        if (a.getOrigem().equals(atual)) {
+                            vizinhos.add(a.getDestino());
+                        } else if (a.getDestino().equals(atual)) {
+                            vizinhos.add(a.getOrigem());
+                        }
+                    }
+
+                    for (Vertice vizinho : vizinhos) {
+                        if (!visitados.contains(vizinho)) {
+                            pilha.push(vizinho);
+                            pai.put(vizinho, atual);
+                        } else if (!vizinho.equals(pai.get(atual))) {
+                            return true; 
+                        }
+                    }
                 }
             }
         }
-        return false;
     }
 
-    private boolean contemCiclosDir() {
+    return false; 
+}
 
-        return false;
+
+    public Map<Vertice, List<Aresta>> getListaAdjacencia() {
+        return listaAdjacencia;
     }
 
-    private boolean contemCiclosNaoDir() {
-
-        return false;
-    }
 }

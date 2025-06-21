@@ -64,6 +64,8 @@ public class BuscaProfundidade {
     }
 
     public void executarDFS(int novaOrigem) {
+        this.vertices = grafo.getListaVertices();
+
         if (novaOrigem < 0 || novaOrigem >= vertices.size()) {
             throw new IllegalArgumentException("Invalid origin index: " + novaOrigem);
         }
