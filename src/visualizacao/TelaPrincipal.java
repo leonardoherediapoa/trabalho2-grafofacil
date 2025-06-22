@@ -501,7 +501,7 @@ public class TelaPrincipal extends JFrame {
     }
 
     private void exibeOrdemTopologica(){
-        LogManager.updateLog(grafo.ordenacaoTopologica());
+        LogManager.updateLog("Ordenação Topologica:\n" + grafo.ordenacaoTopologica());
     }
 
 }
