@@ -191,10 +191,48 @@ public class Grafo {
         return listaAdjacencia;
     }
 
-    public void ordenacaoTopologica(){ //TODO: definir retorno
-        if(contemCiclos()){
-            return;
+    public List<Vertice> ordenacaoTopologica() {
+    if (!this.isDirecionado() || this.contemCiclos()) {
+        List<Vertice> erro = new ArrayList<>();
+        erro.add(new Vertice("-1"));
+        return erro;
+    }
+
+    Map<Vertice, Integer> grauEntrada = new HashMap<>();
+    for (Vertice v : getListaVertices()) {
+        grauEntrada.put(v, 0);
+    }
+
+    for (Map.Entry<Vertice, List<Aresta>> entry : listaAdjacencia.entrySet()) {
+        for (Aresta a : entry.getValue()) {
+            Vertice destino = a.getDestino();
+            grauEntrada.put(destino, grauEntrada.get(destino) + 1);
         }
+    }
+
+    Queue<Vertice> fila = new LinkedList<>();
+    for (Map.Entry<Vertice, Integer> entry : grauEntrada.entrySet()) {
+        if (entry.getValue() == 0) {
+            fila.add(entry.getKey());
+        }
+    }
+
+    List<Vertice> resultado = new ArrayList<>();
+
+    while (!fila.isEmpty()) {
+        Vertice atual = fila.poll();
+        resultado.add(atual);
+
+        for (Aresta a : listaAdjacencia.get(atual)) {
+            Vertice vizinho = a.getDestino();
+            grauEntrada.put(vizinho, grauEntrada.get(vizinho) - 1);
+            if (grauEntrada.get(vizinho) == 0) {
+                fila.add(vizinho);
+            }
+        }
+    }
+
+    return resultado;
     }
 
 }
