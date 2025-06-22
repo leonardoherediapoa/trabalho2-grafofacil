@@ -191,11 +191,9 @@ public class Grafo {
         return listaAdjacencia;
     }
 
-    public List<Vertice> ordenacaoTopologica() {
+   public String ordenacaoTopologica() {
     if (!this.isDirecionado() || this.contemCiclos()) {
-        List<Vertice> erro = new ArrayList<>();
-        erro.add(new Vertice("-1"));
-        return erro;
+        return "-1";
     }
 
     Map<Vertice, Integer> grauEntrada = new HashMap<>();
@@ -232,7 +230,15 @@ public class Grafo {
         }
     }
 
-    return resultado;
+    StringBuilder ordem = new StringBuilder();
+    for (int i = 0; i < resultado.size(); i++) {
+        ordem.append(resultado.get(i).getRotulo());
+        if (i < resultado.size() - 1) {
+            ordem.append(" ");
+        }
     }
+
+    return ordem.toString();
+}
 
 }
