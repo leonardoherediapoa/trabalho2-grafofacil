@@ -157,7 +157,7 @@ public class TelaPrincipal extends JFrame {
 
     }
     private void criarMenu() {
-        JMenuBar menuBar = new JMenuBar();
+        menuBar = new JMenuBar(); //mudança para fazer o menu de cima aparecer
         JMenu menuArquivo = new JMenu("Arquivo");
 
         JMenuItem menuItemAbrir = new JMenuItem("Abrir");
@@ -186,7 +186,7 @@ public class TelaPrincipal extends JFrame {
         menuInterImportarDot.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                abrirArquivo(); //TROCAR AQUI PARA O IMPORTAR DOT
+                importarDot();
                 System.out.println(textArea.getText());
                 SwingUtilities.invokeLater(() -> {
                     painelEsquerdo.invalidate();
@@ -200,7 +200,9 @@ public class TelaPrincipal extends JFrame {
         menuItemSair.addActionListener(e -> System.exit(0));
         menuArquivo.add(menuItemAbrir);
         menuArquivo.add(menuItemSalvar);
+        menuArquivo.add(menuInterImportarDot); //adicionar o importardot no menu de cima
         menuArquivo.add(menuItemSair);
+
 
         JMenu menuAcao = new JMenu("Acao");
         JMenuItem menuItemGrau = new JMenuItem("Mostrar Grau dos Vertices");
@@ -250,8 +252,30 @@ public class TelaPrincipal extends JFrame {
         }
     }
     private void importarDot() {
-        //IMPLEMENTAR AQUI
+        JFileChooser fileChooser = new JFileChooser();
+        int escolha = fileChooser.showOpenDialog(this);
+        if (escolha == JFileChooser.APPROVE_OPTION) {
+            File arquivo = fileChooser.getSelectedFile();
+            try (Scanner scanner = new Scanner(arquivo)) {
+                StringBuilder conteudo = new StringBuilder();
+                while (scanner.hasNextLine()) {
+                    conteudo.append(scanner.nextLine()).append("\n");
+                }
+                String dotConvertido = DotConvert.converterDot(conteudo.toString());
+
+                dadosGrafo = dotConvertido;
+                textArea.setText(dadosGrafo);
+
+                painelEsquerdo.revalidate();
+                textArea.repaint();
+                painelEsquerdo.repaint();
+
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Erro ao importar arquivo DOT: " + ex.getMessage());
+            }
+        }
     }
+
 
 
 
