@@ -5,60 +5,115 @@ import java.util.*;
 public class Grafo {
     private LinkedHashMap<Vertice, List<Aresta>> listaAdjacencia;
     private boolean direcionado = false;
+    private boolean silencioso = false;
 
     public Grafo() {
         listaAdjacencia = new LinkedHashMap<>();
     }
+
     public Grafo(boolean direcionado) {
         this.direcionado = direcionado;
         listaAdjacencia = new LinkedHashMap<>();
     }
+
     public boolean isDirecionado() {
         return direcionado;
     }
 
     public void adicionarVertice(Vertice v) {
-        listaAdjacencia.put(v, new ArrayList<>());
-        System.out.println("Vertice " + v.getRotulo() + " adicionado.");
+        if (!listaAdjacencia.containsKey(v)) {
+            listaAdjacencia.put(v, new ArrayList<>());
+            if (!silencioso) {
+                System.out.println("Vertice " + v.getRotulo() + " adicionado.");
+            }
+        }
     }
+
     public void adicionarAresta(Aresta e) {
         Vertice origem = e.getOrigem();
         Vertice destino = e.getDestino();
+
+         if (!listaAdjacencia.containsKey(origem)) {
+            adicionarVertice(origem);
+        }
+        
+        if (!listaAdjacencia.containsKey(destino)) {
+            adicionarVertice(destino);
+        }
+
         List<Aresta> listaOrigem = listaAdjacencia.get(origem);
         listaOrigem.add(e);
-        if(!e.isDirecionada()) {
+        if (!e.isDirecionada()) {
             List<Aresta> listaDestino = listaAdjacencia.get(destino);
             listaDestino.add(e);
         }
     }
-    public int getNumeroVertices(){
+
+     public void removerAresta(Aresta a) {
+        Vertice origem = a.getOrigem();
+        Vertice destino = a.getDestino();
+
+        List<Aresta> adjOrigem = listaAdjacencia.get(origem);
+        if (adjOrigem != null) {
+            Iterator<Aresta> iterator = adjOrigem.iterator();
+            while (iterator.hasNext()) {
+                Aresta ar = iterator.next();
+                if (ar.getDestino().equals(destino) && ar.getPeso() == a.getPeso()) {
+                    iterator.remove();
+                }
+            }
+        }
+
+        if (!direcionado) {
+            List<Aresta> adjDestino = listaAdjacencia.get(destino);
+            if (adjDestino != null) {
+                Iterator<Aresta> iterator = adjDestino.iterator();
+                while (iterator.hasNext()) {
+                    Aresta ar = iterator.next();
+                    if (ar.getDestino().equals(origem) && ar.getPeso() == a.getPeso()) {
+                        iterator.remove();
+                    }
+                }
+            }
+        }
+    }
+
+    public int getNumeroVertices() {
         return listaAdjacencia.size();
     }
+
     public String toDot() {
         String resultado = "graph G { " + System.lineSeparator();
-        for (Vertice v:getListaVertices()) {
+        for (Vertice v : getListaVertices()) {
             resultado = resultado + "\t" + v.getRotulo() + ";" + System.lineSeparator();
         }
-        for(Aresta e:getListaArestas()) {
-            resultado += "\t" + e.getOrigem().getRotulo() + "--" + e.getDestino().getRotulo() + ";" + System.lineSeparator();
+        for (Aresta e : getListaArestas()) {
+            resultado += "\t" + e.getOrigem().getRotulo() + "--" + e.getDestino().getRotulo() + ";"
+                    + System.lineSeparator();
         }
         resultado += "}";
         return resultado;
     }
+
     public Vertice getVertice(String rotulo) {
-       Set<Vertice> vertices = listaAdjacencia.keySet();
-        for (Vertice v:vertices) if(v.getRotulo().equals(rotulo)) return v;
+        Set<Vertice> vertices = listaAdjacencia.keySet();
+        for (Vertice v : vertices)
+            if (v.getRotulo().equals(rotulo))
+                return v;
         return null;
     }
+
     public List<Vertice> getListaVertices() {
         return new ArrayList<>(listaAdjacencia.keySet());
 
     }
+
     public List<Aresta> getListaArestas() {
         List<Aresta> lista = new ArrayList<>();
-        for (Map.Entry<Vertice, List<Aresta>> item: listaAdjacencia.entrySet()) {
-            for (Aresta e:item.getValue()) {
-                if(!lista.contains(e)) lista.add(e);
+        for (Map.Entry<Vertice, List<Aresta>> item : listaAdjacencia.entrySet()) {
+            for (Aresta e : item.getValue()) {
+                if (!lista.contains(e))
+                    lista.add(e);
             }
         }
         return lista;
@@ -71,31 +126,32 @@ public class Grafo {
     public void limpar() {
         listaAdjacencia = new LinkedHashMap<>();
     }
+
     public void atualizarGrafo(String dadosGrafo) {
         this.limpar();
         System.out.println("Atualizar Grafo");
         dadosGrafo = dadosGrafo.replace("\r\n", ";");
         dadosGrafo = dadosGrafo.replace("\n", ";");
         String[] linhas = dadosGrafo.split(";");
-        for (String linha:linhas) {
+        for (String linha : linhas) {
             String[] colunas = linha.trim().split("\\s*(->|--)\\s*|\\s+");
-            if(colunas.length==1) {
+            if (colunas.length == 1) {
                 String rotuloVertice = colunas[0].trim();
                 adicionarVertice(new Vertice(rotuloVertice));
-            }
-            else if (colunas.length>=2) {
+            } else if (colunas.length >= 2) {
                 String rotuloOrigem = colunas[0].trim();
                 String rotuloDestino = colunas[1].trim();
                 Vertice vOrigem = getVertice(rotuloOrigem);
                 int peso = 1;
-                if(colunas.length==3) peso = Integer.parseInt(colunas[2].trim());
+                if (colunas.length == 3)
+                    peso = Integer.parseInt(colunas[2].trim());
                 this.direcionado = linha.contains("->");
-                if(vOrigem==null) {
+                if (vOrigem == null) {
                     vOrigem = new Vertice(rotuloOrigem);
                     adicionarVertice(vOrigem);
                 }
                 Vertice vDestino = getVertice(rotuloDestino);
-                if(vDestino==null) {
+                if (vDestino == null) {
                     vDestino = new Vertice(rotuloDestino);
                     adicionarVertice(vDestino);
                 }
@@ -106,84 +162,87 @@ public class Grafo {
     }
 
     public boolean contemCiclos() {
-    Set<Vertice> visitados = new HashSet<>();
-    Map<Vertice, String> estado = new HashMap<>(); 
+        Set<Vertice> visitados = new HashSet<>();
+        Map<Vertice, String> estado = new HashMap<>();
 
-    for (Vertice v : this.getListaVertices()) {
-        estado.put(v, "naoVisitado"); 
-    }
+        for (Vertice v : this.getListaVertices()) {
+            estado.put(v, "naoVisitado");
+        }
 
-    for (Vertice v : this.getListaVertices()) {
-        if (this.direcionado) {
-            if (estado.get(v).equals("naoVisitado")) {
-                Stack<Vertice> pilha = new Stack<>();
-                Map<Vertice, String> estadoLocal = new HashMap<>(estado);
+        for (Vertice v : this.getListaVertices()) {
+            if (this.direcionado) {
+                if (estado.get(v).equals("naoVisitado")) {
+                    Stack<Vertice> pilha = new Stack<>();
+                    Map<Vertice, String> estadoLocal = new HashMap<>(estado);
 
-                pilha.push(v);
-                estadoLocal.put(v, "visitando");
+                    pilha.push(v);
+                    estadoLocal.put(v, "visitando");
 
-                while (!pilha.isEmpty()) {
-                    Vertice atual = pilha.peek();
-                    boolean encontrouVizinho = false;
+                    while (!pilha.isEmpty()) {
+                        Vertice atual = pilha.peek();
+                        boolean encontrouVizinho = false;
 
-                    for (Aresta a : this.getListaArestas()) {
-                        if (a.getOrigem().equals(atual)) {
-                            Vertice vizinho = a.getDestino();
+                        for (Aresta a : this.getListaArestas()) {
+                            if (a.getOrigem().equals(atual)) {
+                                Vertice vizinho = a.getDestino();
 
-                            if (estadoLocal.get(vizinho).equals("visitando")) {
-                                return true; 
-                            }
+                                if (estadoLocal.get(vizinho).equals("visitando")) {
+                                    return true;
+                                }
 
-                            if (estadoLocal.get(vizinho).equals("naoVisitado")) {
-                                pilha.push(vizinho);
-                                estadoLocal.put(vizinho, "visitando");
-                                encontrouVizinho = true;
-                                break;
+                                if (estadoLocal.get(vizinho).equals("naoVisitado")) {
+                                    pilha.push(vizinho);
+                                    estadoLocal.put(vizinho, "visitando");
+                                    encontrouVizinho = true;
+                                    break;
+                                }
                             }
                         }
-                    }
 
-                    if (!encontrouVizinho) {
-                        estadoLocal.put(atual, "visitado");
-                        pilha.pop();
+                        if (!encontrouVizinho) {
+                            estadoLocal.put(atual, "visitado");
+                            pilha.pop();
+                        }
                     }
                 }
-            }
-        } else {
-            if (!visitados.contains(v)) {
-                Stack<Vertice> pilha = new Stack<>();
-                Map<Vertice, Vertice> pai = new HashMap<>();
+            } else {
+                if (!visitados.contains(v)) {
+                    Stack<Vertice> pilha = new Stack<>();
+                    Map<Vertice, Vertice> pai = new HashMap<>();
 
-                pilha.push(v);
-                pai.put(v, null);
+                    pilha.push(v);
+                    pai.put(v, null);
 
-                while (!pilha.isEmpty()) {
-                    Vertice atual = pilha.pop();
-                    visitados.add(atual);
+                    while (!pilha.isEmpty()) {
+                        Vertice atual = pilha.pop();
+                        visitados.add(atual);
 
-                    List<Vertice> vizinhos = new ArrayList<>();
-                    for (Aresta a : this.getListaArestas()) {
-                        if (a.getOrigem().equals(atual)) {
-                            vizinhos.add(a.getDestino());
-                        } else if (a.getDestino().equals(atual)) {
-                            vizinhos.add(a.getOrigem());
+                        List<Vertice> vizinhos = new ArrayList<>();
+                        for (Aresta a : this.getListaArestas()) {
+                            if (a.getOrigem().equals(atual)) {
+                                vizinhos.add(a.getDestino());
+                            } else if (a.getDestino().equals(atual)) {
+                                vizinhos.add(a.getOrigem());
+                            }
                         }
-                    }
 
-                    for (Vertice vizinho : vizinhos) {
-                        if (!visitados.contains(vizinho)) {
-                            pilha.push(vizinho);
-                            pai.put(vizinho, atual);
-                        } else if (!vizinho.equals(pai.get(atual))) {
-                            return true; 
+                        for (Vertice vizinho : vizinhos) {
+                            if (!visitados.contains(vizinho)) {
+                                pilha.push(vizinho);
+                                pai.put(vizinho, atual);
+                            } else if (!vizinho.equals(pai.get(atual))) {
+                                return true;
+                            }
                         }
                     }
                 }
             }
         }
+
+        return false;
     }
-
-    return false; 
-}
-
+    
+      public void setSilencioso(boolean silencioso){
+        this.silencioso = silencioso;
+    }
 }
