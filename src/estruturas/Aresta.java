@@ -25,4 +25,8 @@ public class Aresta {
     public boolean isDirecionada() {
         return direcionada;
     }
+    @Override
+    public String toString() {
+        return origem.getRotulo() + " -- " + destino.getRotulo() + " (peso: " + peso + ")";
+    }
 }
