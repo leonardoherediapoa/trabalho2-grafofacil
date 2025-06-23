@@ -225,7 +225,7 @@ public class TelaPrincipal extends JFrame {
 
                 if (arquivo.getName().toLowerCase().endsWith(".dot")) {
                     dadosGrafo = DotConvert.converterDot(dadosGrafo);
-                }
+                } //Não se se isso é necessário então não mudei
 
                 textArea.setText(dadosGrafo);
                 painelEsquerdo.revalidate();
