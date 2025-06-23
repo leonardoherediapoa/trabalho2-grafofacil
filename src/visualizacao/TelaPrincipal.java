@@ -2,6 +2,7 @@ package visualizacao;
 
 import algoritmos.MarcarVertices;
 import algoritmos.BuscaProfundidade;
+import algoritmos.MST;
 import estruturas.Aresta;
 import estruturas.Grafo;
 import estruturas.Vertice;
@@ -16,8 +17,6 @@ import java.util.*;
 import java.util.List;
 
 import utils.DotConvert;
-
-
 
 public class TelaPrincipal extends JFrame {
     public final Grafo grafo;
@@ -36,7 +35,8 @@ public class TelaPrincipal extends JFrame {
     private BuscaProfundidade dfs;
 
     public TelaPrincipal() {
-        //dadosGrafo = "A" + System.lineSeparator() + "B" + System.lineSeparator() + "C";
+        // dadosGrafo = "A" + System.lineSeparator() + "B" + System.lineSeparator() +
+        // "C";
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 800);
         setLocationRelativeTo(null);
@@ -79,9 +79,6 @@ public class TelaPrincipal extends JFrame {
         textArea.setText(grafoAleatorio.gerarGrafo(5, true));
         aplicar();
 
-
-
-
     }
 
     private void criarMenu() {
@@ -123,7 +120,7 @@ public class TelaPrincipal extends JFrame {
         JMenu menuAcao = new JMenu("Acao");
         JMenuItem menuItemGrau = new JMenuItem("Mostrar Grau dos Vertices");
         JMenuItem menuGrafoRandomico = new JMenuItem("Gerar Grafo");
-        menuGrafoRandomico.addActionListener(e-> gerarGrafoAleatorio());
+        menuGrafoRandomico.addActionListener(e -> gerarGrafoAleatorio());
         menuAcao.add(menuItemGrau);
         menuAcao.add(menuGrafoRandomico);
 
@@ -132,8 +129,8 @@ public class TelaPrincipal extends JFrame {
         setJMenuBar(menuBar);
         setVisible(true);
 
-
     }
+
     private void criarBotoes() {
         barraBotoes = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton btnAplicar = new JButton("Aplicar");
@@ -158,12 +155,11 @@ public class TelaPrincipal extends JFrame {
         barraBotoes.add(botaoSalvar);
 
         btnAplicar.addActionListener(new ActionListener() {
-                                         @Override
-                                         public void actionPerformed(ActionEvent e) {
-                                             aplicar();
-                                         }
-                                     }
-        );
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                aplicar();
+            }
+        });
 
         JButton btnMarcar = new JButton("Marcar Vertices");
         btnMarcar.addActionListener(new ActionListener() {
@@ -233,6 +229,13 @@ public class TelaPrincipal extends JFrame {
         barraBotoes.add(btnLargura);
 
         JButton btnMST = new JButton("MST");
+        btnMST.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MST mst = new MST(grafo);
+                mst.gerarMST();
+            }
+        });
         barraBotoes.add(btnMST);
 
         JButton btnDijkstra = new JButton("Dijkstra");
@@ -254,6 +257,7 @@ public class TelaPrincipal extends JFrame {
         add(painelDireito, BorderLayout.CENTER);
         add(painelDados, BorderLayout.WEST);
     }
+
     private void abrirArquivo() {
         JFileChooser fileChooser = new JFileChooser();
         int escolha = fileChooser.showOpenDialog(this);
@@ -276,6 +280,7 @@ public class TelaPrincipal extends JFrame {
             }
         }
     }
+
     private void salvarArquivo() {
         JFileChooser fileChooser = new JFileChooser();
         int escolha = fileChooser.showSaveDialog(this);
@@ -290,10 +295,12 @@ public class TelaPrincipal extends JFrame {
             }
         }
     }
+
     private void importarDot() {
-        //IMPLEMENTAR AQUI
+        // IMPLEMENTAR AQUI
         System.out.println("importar dot...");
     }
+
     private void aplicar() {
         System.out.println("Clicou no Aplicar da Tela Principal");
         dadosGrafo = textArea.getText();
@@ -309,7 +316,7 @@ public class TelaPrincipal extends JFrame {
 
     private void gerarGrafoAleatorio() {
         JPanel painel = new JPanel(new GridLayout(0, 1));
-        String[] opcoes = {"Não direcionado", "Direcionado"};
+        String[] opcoes = { "Não direcionado", "Direcionado" };
         JComboBox<String> comboDirecionado = new JComboBox<>(opcoes);
         JTextField campoVertices = new JTextField();
 
@@ -320,8 +327,7 @@ public class TelaPrincipal extends JFrame {
 
         int resultado = JOptionPane.showConfirmDialog(
                 TelaPrincipal.this, painel, "Gerar Grafo Aleatório",
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE
-        );
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
         if (resultado == JOptionPane.OK_OPTION) {
             boolean direcionado = comboDirecionado.getSelectedIndex() == 1;
@@ -329,20 +335,19 @@ public class TelaPrincipal extends JFrame {
             int quantidadeVertices;
             try {
                 quantidadeVertices = Integer.parseInt(campoVertices.getText());
-                if (quantidadeVertices <= 0) throw new NumberFormatException();
+                if (quantidadeVertices <= 0)
+                    throw new NumberFormatException();
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(
                         TelaPrincipal.this,
                         "Quantidade de vértices inválida.",
                         "Erro",
-                        JOptionPane.ERROR_MESSAGE
-                );
+                        JOptionPane.ERROR_MESSAGE);
                 return;
             }
             GeradorGrafoAleatorio g = new GeradorGrafoAleatorio();
             textArea.setText(g.gerarGrafo(quantidadeVertices, direcionado));
         }
-
 
     }
 
