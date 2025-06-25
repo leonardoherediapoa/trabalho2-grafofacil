@@ -191,4 +191,54 @@ public class Grafo {
         return listaAdjacencia;
     }
 
+   public String ordenacaoTopologica() {
+    if (!this.isDirecionado() || this.contemCiclos()) {
+        return "-1";
+    }
+
+    Map<Vertice, Integer> grauEntrada = new HashMap<>();
+    for (Vertice v : getListaVertices()) {
+        grauEntrada.put(v, 0);
+    }
+
+    for (Map.Entry<Vertice, List<Aresta>> entry : listaAdjacencia.entrySet()) {
+        for (Aresta a : entry.getValue()) {
+            Vertice destino = a.getDestino();
+            grauEntrada.put(destino, grauEntrada.get(destino) + 1);
+        }
+    }
+
+    Queue<Vertice> fila = new LinkedList<>();
+    for (Map.Entry<Vertice, Integer> entry : grauEntrada.entrySet()) {
+        if (entry.getValue() == 0) {
+            fila.add(entry.getKey());
+        }
+    }
+
+    List<Vertice> resultado = new ArrayList<>();
+
+    while (!fila.isEmpty()) {
+        Vertice atual = fila.poll();
+        resultado.add(atual);
+
+        for (Aresta a : listaAdjacencia.get(atual)) {
+            Vertice vizinho = a.getDestino();
+            grauEntrada.put(vizinho, grauEntrada.get(vizinho) - 1);
+            if (grauEntrada.get(vizinho) == 0) {
+                fila.add(vizinho);
+            }
+        }
+    }
+
+    StringBuilder ordem = new StringBuilder();
+    for (int i = 0; i < resultado.size(); i++) {
+        ordem.append(resultado.get(i).getRotulo());
+        if (i < resultado.size() - 1) {
+            ordem.append(" ");
+        }
+    }
+
+    return ordem.toString();
+}
+
 }

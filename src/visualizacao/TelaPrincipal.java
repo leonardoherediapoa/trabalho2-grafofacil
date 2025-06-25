@@ -126,7 +126,10 @@ public class TelaPrincipal extends JFrame {
         JMenu menuAcao = new JMenu("Acao");
         JMenuItem menuItemGrau = new JMenuItem("Mostrar Grau dos Vertices");
         JMenuItem menuGrafoRandomico = new JMenuItem("Gerar Grafo");
+        JMenuItem menuOrdemTopologica = new JMenuItem("Ordem Topologica");
+        menuOrdemTopologica.addActionListener(e -> exibeOrdemTopologica());
         menuGrafoRandomico.addActionListener(e-> gerarGrafoAleatorio());
+        menuAcao.add(menuOrdemTopologica);
         menuAcao.add(menuItemGrau);
         menuAcao.add(menuGrafoRandomico);
 
@@ -497,5 +500,8 @@ public class TelaPrincipal extends JFrame {
 
     }
 
+    private void exibeOrdemTopologica(){
+        LogManager.updateLog("Ordenação Topologica:\n" + grafo.ordenacaoTopologica());
+    }
 
 }
