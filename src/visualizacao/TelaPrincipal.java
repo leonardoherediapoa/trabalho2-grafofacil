@@ -19,8 +19,6 @@ import java.util.List;
 
 import utils.DotConvert;
 
-
-
 public class TelaPrincipal extends JFrame {
     public final Grafo grafo;
     public String dadosGrafo;
@@ -33,28 +31,22 @@ public class TelaPrincipal extends JFrame {
     private JTextArea textLog;
     public JTextArea textArea;
     private JMenuBar menuBar;
-    private JScrollPane scrollPane;
 
     private BuscaProfundidade dfs;
 
     public TelaPrincipal() {
-        // dadosGrafo = "A" + System.lineSeparator() + "B" + System.lineSeparator() +
-        // "C";
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 800);
         setLocationRelativeTo(null);
         setTitle("ALEST2 - Ferramenta para apoio ao aprendizado de grafos");
 
         painelEsquerdo = new JPanel(new BorderLayout());
-        painelEsquerdo.setPreferredSize(new Dimension(200, 0));
+        painelEsquerdo.setPreferredSize(new Dimension(300, 0));
 
         painelDireito = new JPanel(new BorderLayout());
 
-        painelEsquerdo = new JPanel(new BorderLayout());
-        painelEsquerdo.setPreferredSize(new Dimension(300, 0));
-
         textArea = new JTextArea();
-        scrollPane = new JScrollPane(textArea);
+        JScrollPane scrollPane = new JScrollPane(textArea);
 
         grafo = new Grafo();
         painelGrafo = new PainelGrafo(grafo);
@@ -74,50 +66,48 @@ public class TelaPrincipal extends JFrame {
 
         criarBotoes();
 
-        criarMenu();
-        setJMenuBar(menuBar);
+        criarMenu();  // chama o menu UMA vez
+
         setVisible(true);
 
         GeradorGrafoAleatorio grafoAleatorio = new GeradorGrafoAleatorio();
         textArea.setText(grafoAleatorio.gerarGrafo(5, true));
         aplicar();
-
-
-
-
     }
 
     private void criarMenu() {
         menuBar = new JMenuBar();
+
         JMenu menuArquivo = new JMenu("Arquivo");
 
         JMenuItem menuItemAbrir = new JMenuItem("Abrir");
-        menuItemAbrir.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                abrirArquivo();
-                System.out.println(textArea.getText());
-                SwingUtilities.invokeLater(() -> {
-                    painelEsquerdo.invalidate();
-                    painelEsquerdo.revalidate();
-                    painelEsquerdo.repaint();
-                });
-            }
-        });
-
-        JMenuItem menuItemSalvar = new JMenuItem("Salvar");
-        menuItemSalvar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                salvarArquivo();
-            }
+        menuItemAbrir.addActionListener(e -> {
+            abrirArquivo();
+            System.out.println(textArea.getText());
+            SwingUtilities.invokeLater(() -> {
+                painelEsquerdo.invalidate();
+                painelEsquerdo.revalidate();
+                painelEsquerdo.repaint();
+            });
         });
 
         JMenuItem menuImportarDot = new JMenuItem("Importar DOT");
-        menuImportarDot.addActionListener(e -> importarDot());
+        menuImportarDot.addActionListener(e -> {
+            importarDot();
+            System.out.println(textArea.getText());
+            SwingUtilities.invokeLater(() -> {
+                painelEsquerdo.invalidate();
+                painelEsquerdo.revalidate();
+                painelEsquerdo.repaint();
+            });
+        });
+
+        JMenuItem menuItemSalvar = new JMenuItem("Salvar");
+        menuItemSalvar.addActionListener(e -> salvarArquivo());
 
         JMenuItem menuItemSair = new JMenuItem("Sair");
         menuItemSair.addActionListener(e -> System.exit(0));
+
         menuArquivo.add(menuItemAbrir);
         menuArquivo.add(menuImportarDot);
         menuArquivo.add(menuItemSalvar);
@@ -126,122 +116,90 @@ public class TelaPrincipal extends JFrame {
         JMenu menuAcao = new JMenu("Acao");
         JMenuItem menuItemGrau = new JMenuItem("Mostrar Grau dos Vertices");
         JMenuItem menuGrafoRandomico = new JMenuItem("Gerar Grafo");
-        menuGrafoRandomico.addActionListener(e-> gerarGrafoAleatorio());
+        menuGrafoRandomico.addActionListener(e -> gerarGrafoAleatorio());
         menuAcao.add(menuItemGrau);
         menuAcao.add(menuGrafoRandomico);
 
         menuBar.add(menuArquivo);
         menuBar.add(menuAcao);
+
         setJMenuBar(menuBar);
-        setVisible(true);
-
-
     }
+
     private void criarBotoes() {
         barraBotoes = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton btnAplicar = new JButton("Aplicar");
         JButton botaoAbrir = new JButton("Abrir");
 
-        botaoAbrir.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                abrirArquivo();
-            }
-        });
+        botaoAbrir.addActionListener(e -> abrirArquivo());
 
         JButton botaoSalvar = new JButton("Salvar");
-        botaoSalvar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                salvarArquivo();
-            }
-        });
+        botaoSalvar.addActionListener(e -> salvarArquivo());
 
         barraBotoes.add(botaoAbrir);
         barraBotoes.add(botaoSalvar);
 
-        btnAplicar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Clicou no Aplicar da Tela Principal");
-                dadosGrafo = textArea.getText();
-                painelGrafo.limpar();
-                grafo.atualizarGrafo(dadosGrafo);
-                painelGrafo.desenharGrafo();
-                painelGrafo.setVisible(true);
-                painelGrafo.repaint();
-            }
+        btnAplicar.addActionListener(e -> {
+            System.out.println("Clicou no Aplicar da Tela Principal");
+            dadosGrafo = textArea.getText();
+            painelGrafo.limpar();
+            grafo.atualizarGrafo(dadosGrafo);
+            painelGrafo.desenharGrafo();
+            painelGrafo.setVisible(true);
+            painelGrafo.repaint();
         });
 
         JButton btnMarcar = new JButton("Marcar Vertices");
-        btnMarcar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String origem = JOptionPane.showInputDialog("Informe o vértice de origem para DFS:");
-                if (origem != null && !origem.trim().isEmpty()) {
-                    MarcarVertices marcarVertices = new MarcarVertices(painelGrafo);
-                    try {
-                        marcarVertices.marcarVertices(grafo, grafo.getListaVertices());
-                    } catch (InterruptedException ex) {
-                        throw new RuntimeException(ex);
-                    }
+        btnMarcar.addActionListener(e -> {
+            String origem = JOptionPane.showInputDialog("Informe o vértice de origem para DFS:");
+            if (origem != null && !origem.trim().isEmpty()) {
+                MarcarVertices marcarVertices = new MarcarVertices(painelGrafo);
+                try {
+                    marcarVertices.marcarVertices(grafo, grafo.getListaVertices());
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
                 }
             }
         });
         barraBotoes.add(btnMarcar);
 
         JButton btnDFS = new JButton("Profundidade");
-        btnDFS.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String origem = JOptionPane.showInputDialog("Informe o vértice de origem para DFS:");
-                if (origem != null && !origem.trim().isEmpty()) {
-                    try {
-                        Vertice verticeOrigem = grafo.getVertice(origem.trim());
-                        if (verticeOrigem != null) {
-                            int indiceOrigem = grafo.getListaVertices().indexOf(verticeOrigem);
-
-                            if (indiceOrigem == -1) {
-                                throw new RuntimeException("Inconsistência no estado do grafo");
-                            }
-
-                            if (dfs == null) {
-                                dfs = new BuscaProfundidade(grafo, indiceOrigem);
-                            } else {
-                                dfs.executarDFS(indiceOrigem);
-                            }
-
-                            LogManager.updateLog(dfs.getRelatorioTravessia());
-
-                            List<Vertice> verticesVisitados = dfs.getVerticesVisitados();
-
-                            for (Vertice v : grafo.getListaVertices()) {
-                                painelGrafo.setCorVertice(v, Color.YELLOW);
-                            }
-                            painelGrafo.repaint();
-
-                            painelGrafo.desenharVertices(verticesVisitados, Color.RED, 1000);
-
-                        } else {
-                            JOptionPane.showMessageDialog(TelaPrincipal.this,
-                                    "Vértice '" + origem + "' não encontrado no grafo!");
+        btnDFS.addActionListener(e -> {
+            String origem = JOptionPane.showInputDialog("Informe o vértice de origem para DFS:");
+            if (origem != null && !origem.trim().isEmpty()) {
+                try {
+                    Vertice verticeOrigem = grafo.getVertice(origem.trim());
+                    if (verticeOrigem != null) {
+                        int indiceOrigem = grafo.getListaVertices().indexOf(verticeOrigem);
+                        if (indiceOrigem == -1) {
+                            throw new RuntimeException("Inconsistência no estado do grafo");
                         }
-
-                    } catch (Exception ex) {
+                        if (dfs == null) {
+                            dfs = new BuscaProfundidade(grafo, indiceOrigem);
+                        } else {
+                            dfs.executarDFS(indiceOrigem);
+                        }
+                        LogManager.updateLog(dfs.getRelatorioTravessia());
+                        List<Vertice> verticesVisitados = dfs.getVerticesVisitados();
+                        for (Vertice v : grafo.getListaVertices()) {
+                            painelGrafo.setCorVertice(v, Color.YELLOW);
+                        }
+                        painelGrafo.repaint();
+                        painelGrafo.desenharVertices(verticesVisitados, Color.RED, 1000);
+                    } else {
                         JOptionPane.showMessageDialog(TelaPrincipal.this,
-                                "Erro ao executar DFS: " + ex.getMessage());
+                                "Vértice '" + origem + "' não encontrado no grafo!");
                     }
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(TelaPrincipal.this,
+                            "Erro ao executar DFS: " + ex.getMessage());
                 }
             }
         });
-
         barraBotoes.add(btnDFS);
 
         JButton btnLargura = new JButton("Largura");
-        barraBotoes.add(btnLargura);
-        btnLargura.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
+        btnLargura.addActionListener(e -> {
             String origem = JOptionPane.showInputDialog("Informe o vértice de origem para BFS:");
             if (origem != null && !origem.trim().isEmpty()) {
                 Vertice verticeOrigem = grafo.getVertice(origem.trim());
@@ -258,9 +216,7 @@ public class TelaPrincipal extends JFrame {
                             painelGrafo.setCorVertice(v, Color.YELLOW);
                         }
                         painelGrafo.repaint();
-
                         painelGrafo.desenharVertices(visitados, Color.RED, 1000);
-
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(TelaPrincipal.this,
                                 "Erro ao executar BFS: " + ex.getMessage());
@@ -270,8 +226,8 @@ public class TelaPrincipal extends JFrame {
                             "Vértice '" + origem + "' não encontrado no grafo!");
                 }
             }
-        }
-    });
+        });
+        barraBotoes.add(btnLargura);
 
         JButton btnMST = new JButton("MST");
         barraBotoes.add(btnMST);
@@ -279,82 +235,72 @@ public class TelaPrincipal extends JFrame {
         JButton btnDijkstra = new JButton("Dijkstra");
         barraBotoes.add(btnDijkstra);
 
-        btnDijkstra.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String rotOrigem = JOptionPane.showInputDialog(
-                        TelaPrincipal.this,
-                        "Rótulo do vértice de ORIGEM:",
-                        "Dijkstra – Escolha a origem",
-                        JOptionPane.QUESTION_MESSAGE);
+        btnDijkstra.addActionListener(e -> {
+            String rotOrigem = JOptionPane.showInputDialog(
+                    TelaPrincipal.this,
+                    "Rótulo do vértice de ORIGEM:",
+                    "Dijkstra – Escolha a origem",
+                    JOptionPane.QUESTION_MESSAGE);
 
-                if (rotOrigem == null || rotOrigem.trim().isEmpty())
-                    return;
-                Vertice vOrigem = grafo.getVertice(rotOrigem.trim());
-                if (vOrigem == null) {
-                    JOptionPane.showMessageDialog(TelaPrincipal.this,
-                            "Vértice \"" + rotOrigem + "\" não existe.");
-                    return;
-                }
-
-                String rotDestino = JOptionPane.showInputDialog(
-                        TelaPrincipal.this,
-                        "Rótulo do vértice DESTINO (deixe em branco para ver todos):",
-                        "Dijkstra – Destino",
-                        JOptionPane.QUESTION_MESSAGE);
-
-                // Executa o algoritmo
-                Dijkstra d = new Dijkstra(grafo, vOrigem);
-
-                if (rotDestino != null && !rotDestino.trim().isEmpty()) {
-                    Vertice vDestino = grafo.getVertice(rotDestino.trim());
-                    if (vDestino == null) {
-                        JOptionPane.showMessageDialog(TelaPrincipal.this,
-                                "Vértice \"" + rotDestino + "\" não existe.");
-                        return;
-                    }
-
-                    java.util.List<Vertice> caminho = d.getCaminho(vDestino);
-                    if (caminho.isEmpty()) {
-                        JOptionPane.showMessageDialog(TelaPrincipal.this,
-                                "Não há caminho de " + rotOrigem + " até " + rotDestino + ".");
-                        return;
-                    }
-
-                    // texto no log
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("Caminho mínimo ").append(rotOrigem).append(" → ")
-                            .append(rotDestino).append(" (custo ")
-                            .append(d.getDistancia(vDestino)).append("): ");
-                    for (Vertice v : caminho)
-                        sb.append(v.getRotulo()).append(" ");
-                    sb.append('\n');
-                    textLog.append(sb.toString());
-
-                    painelGrafo.desenharVertices(caminho, Color.ORANGE, 400);
-                }
-
-                else {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("Dijkstra a partir de ").append(rotOrigem).append(":\n");
-                    for (Vertice v : grafo.getListaVertices()) {
-                        int dMin = d.getDistancia(v);
-                        sb.append("  ").append(v.getRotulo()).append(" = ");
-                        sb.append(dMin == Integer.MAX_VALUE ? "∞" : dMin).append('\n');
-                    }
-                    textLog.append(sb.toString());
-                }
-
-                textLog.setCaretPosition(textLog.getDocument().getLength());
+            if (rotOrigem == null || rotOrigem.trim().isEmpty())
+                return;
+            Vertice vOrigem = grafo.getVertice(rotOrigem.trim());
+            if (vOrigem == null) {
+                JOptionPane.showMessageDialog(TelaPrincipal.this,
+                        "Vértice \"" + rotOrigem + "\" não existe.");
+                return;
             }
+
+            String rotDestino = JOptionPane.showInputDialog(
+                    TelaPrincipal.this,
+                    "Rótulo do vértice DESTINO (deixe em branco para ver todos):",
+                    "Dijkstra – Destino",
+                    JOptionPane.QUESTION_MESSAGE);
+
+            Dijkstra d = new Dijkstra(grafo, vOrigem);
+
+            if (rotDestino != null && !rotDestino.trim().isEmpty()) {
+                Vertice vDestino = grafo.getVertice(rotDestino.trim());
+                if (vDestino == null) {
+                    JOptionPane.showMessageDialog(TelaPrincipal.this,
+                            "Vértice \"" + rotDestino + "\" não existe.");
+                    return;
+                }
+                List<Vertice> caminho = d.getCaminho(vDestino);
+                if (caminho.isEmpty()) {
+                    JOptionPane.showMessageDialog(TelaPrincipal.this,
+                            "Não há caminho de " + rotOrigem + " até " + rotDestino + ".");
+                    return;
+                }
+                StringBuilder sb = new StringBuilder();
+                sb.append("Caminho mínimo ").append(rotOrigem).append(" → ")
+                        .append(rotDestino).append(" (custo ")
+                        .append(d.getDistancia(vDestino)).append("): ");
+                for (Vertice v : caminho)
+                    sb.append(v.getRotulo()).append(" ");
+                sb.append('\n');
+                textLog.append(sb.toString());
+
+                painelGrafo.desenharVertices(caminho, Color.ORANGE, 400);
+            } else {
+                StringBuilder sb = new StringBuilder();
+                sb.append("Dijkstra a partir de ").append(rotOrigem).append(":\n");
+                for (Vertice v : grafo.getListaVertices()) {
+                    int dMin = d.getDistancia(v);
+                    sb.append("  ").append(v.getRotulo()).append(" = ");
+                    sb.append(dMin == Integer.MAX_VALUE ? "∞" : dMin).append('\n');
+                }
+                textLog.append(sb.toString());
+            }
+
+            textLog.setCaretPosition(textLog.getDocument().getLength());
         });
 
         JButton btnFord = new JButton("Bellman-Ford");
         barraBotoes.add(btnFord);
 
-        painelEsquerdo.add(scrollPane, BorderLayout.CENTER);
+        painelEsquerdo.add(new JScrollPane(textArea), BorderLayout.CENTER);
         painelEsquerdo.add(barraBotoes, BorderLayout.NORTH);
-        painelEsquerdo.add(scrollPane, BorderLayout.CENTER);
 
         painelDados = new JPanel(new BorderLayout());
         painelDados.add(painelEsquerdo, BorderLayout.CENTER);
@@ -364,44 +310,6 @@ public class TelaPrincipal extends JFrame {
         add(barraBotoes, BorderLayout.NORTH);
         add(painelDireito, BorderLayout.CENTER);
         add(painelDados, BorderLayout.WEST);
-
-        JMenuBar menuBar = new JMenuBar();
-        JMenu menuArquivo = new JMenu("Arquivo");
-
-        JMenuItem menuItemAbrir = new JMenuItem("Abrir");
-        menuItemAbrir.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                abrirArquivo();
-                System.out.println(textArea.getText());
-                SwingUtilities.invokeLater(() -> {
-                    painelEsquerdo.invalidate();
-                    painelEsquerdo.revalidate();
-                    painelEsquerdo.repaint();
-                });
-            }
-        });
-
-        JMenuItem menuItemSalvar = new JMenuItem("Salvar");
-        menuItemSalvar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                salvarArquivo();
-            }
-        });
-
-        JMenuItem menuItemSair = new JMenuItem("Sair");
-        menuItemSair.addActionListener(e -> System.exit(0));
-        menuArquivo.add(menuItemAbrir);
-        menuArquivo.add(menuItemSalvar);
-        menuArquivo.add(menuItemSair);
-        menuBar.add(menuArquivo);
-        setJMenuBar(menuBar);
-        setVisible(true);
-
-        LogManager.configurar(textLog, grafo);
-        LogManager.updateLog("conteudo adicional");
-
     }
 
     private void abrirArquivo() {
@@ -415,9 +323,9 @@ public class TelaPrincipal extends JFrame {
                     conteudo.append(scanner.nextLine()).append("\n");
                 }
                 dadosGrafo = conteudo.toString();
-                textArea.setText(dadosGrafo);
-                painelEsquerdo.revalidate();
-                textArea.repaint();
+                if (arquivo.getName().toLowerCase().endsWith(".dot")) {
+                    dadosGrafo = DotConvert.converterDot(dadosGrafo);
+                }
                 textArea.setText(dadosGrafo);
                 painelEsquerdo.revalidate();
                 painelEsquerdo.repaint();
@@ -441,10 +349,32 @@ public class TelaPrincipal extends JFrame {
             }
         }
     }
+
     private void importarDot() {
-        //IMPLEMENTAR AQUI
-        System.out.println("importar dot...");
+        JFileChooser fileChooser = new JFileChooser();
+        int escolha = fileChooser.showOpenDialog(this);
+        if (escolha == JFileChooser.APPROVE_OPTION) {
+            File arquivo = fileChooser.getSelectedFile();
+            try (Scanner scanner = new Scanner(arquivo)) {
+                StringBuilder conteudo = new StringBuilder();
+                while (scanner.hasNextLine()) {
+                    conteudo.append(scanner.nextLine()).append("\n");
+                }
+                String dotConvertido = DotConvert.converterDot(conteudo.toString());
+
+                dadosGrafo = dotConvertido;
+                textArea.setText(dadosGrafo);
+
+                painelEsquerdo.revalidate();
+                textArea.repaint();
+                painelEsquerdo.repaint();
+
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Erro ao importar arquivo DOT: " + ex.getMessage());
+            }
+        }
     }
+
     private void aplicar() {
         System.out.println("Clicou no Aplicar da Tela Principal");
         dadosGrafo = textArea.getText();
@@ -455,7 +385,6 @@ public class TelaPrincipal extends JFrame {
         painelGrafo.repaint();
         LogManager.configurar(textLog, grafo);
         LogManager.updateLog("Contem ciclos: " + grafo.contemCiclos());
-
     }
 
     private void gerarGrafoAleatorio() {
@@ -493,9 +422,5 @@ public class TelaPrincipal extends JFrame {
             GeradorGrafoAleatorio g = new GeradorGrafoAleatorio();
             textArea.setText(g.gerarGrafo(quantidadeVertices, direcionado));
         }
-
-
     }
-
-
 }
